@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Checkout — NexMart</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    .checkout-layout { max-width:1100px; margin:0 auto; padding:2.5rem 2rem; display:grid; grid-template-columns:1.2fr .85fr; gap:2rem; align-items:start; }
+    /* Steps */
+    .steps-bar { display:flex; align-items:center; margin-bottom:2rem; }
+    .step { display:flex; align-items:center; gap:.5rem; flex:1; }
+    .step-circle { width:32px; height:32px; border-radius:50%; border:2px solid var(--border); display:grid; place-items:center; font-size:.78rem; font-weight:700; flex-shrink:0; transition:all var(--t); background:var(--white); color:var(--text-lt); }
+    .step.active .step-circle  { background:var(--navy); color:#fff; border-color:var(--navy); }
+    .step.done .step-circle    { background:var(--success); color:#fff; border-color:var(--success); }
+    .step-label { font-size:.75rem; font-weight:600; color:var(--text-lt); }
+    .step.active .step-label, .step.done .step-label { color:var(--text); }
+    .step-line { flex:1; height:2px; background:var(--border); margin:0 .5rem; }
+    .step-line.done { background:var(--success); }
+    /* Section cards */
+    .co-card { background:var(--white); border-radius:var(--radius); border:1px solid var(--border); margin-bottom:1.25rem; overflow:hidden; }
+    .co-card-head { padding:1.1rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg); }
+    .co-card-head-title { display:flex; align-items:center; gap:.6rem; font-weight:700; font-size:.95rem; }
+    .co-card-head-title i { color:var(--navy); }
+    .co-body { padding:1.5rem; }
+    .input-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    /* Address options */
+    .addr-options { display:flex; flex-direction:column; gap:.6rem; margin-bottom:1rem; }
+    .addr-option { border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.1rem; cursor:pointer; display:flex; align-items:flex-start; gap:.75rem; transition:all var(--t); }
+    .addr-option:hover { border-color:var(--navy); }
+    .addr-option.selected { border-color:var(--navy); background:var(--navy-pale); }
+    .addr-option input[type=radio] { accent-color:var(--navy); margin-top:.15rem; flex-shrink:0; }
+    .addr-info strong { display:block; font-size:.875rem; }
+    .addr-info span { font-size:.8rem; color:var(--text-lt); line-height:1.5; display:block; }
+    /* Delivery slots */
+    .slot-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+    .slot-btn { padding:.55rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:var(--white); font-family:var(--font-body); font-size:.78rem; font-weight:500; cursor:pointer; transition:all var(--t); text-align:center; }
+    .slot-btn:hover,.slot-btn.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+    .slot-btn.unavailable { background:var(--bg); color:var(--text-lt); cursor:not-allowed; border-color:var(--border); }
+    /* Payment methods */
+    .pay-methods { display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem; margin-bottom:1.25rem; }
+    .pay-method { border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:.9rem 1rem; cursor:pointer; display:flex; align-items:center; gap:.7rem; transition:all var(--t); }
+    .pay-method:hover { border-color:var(--navy); }
+    .pay-method.selected { border-color:var(--navy); background:var(--navy-pale); }
+    .pay-method input[type=radio] { accent-color:var(--navy); }
+    .pay-method-icon { font-size:1.3rem; }
+    .pay-method-info strong { display:block; font-size:.82rem; font-weight:700; }
+    .pay-method-info span { font-size:.72rem; color:var(--text-lt); }
+    .upi-apps { display:flex; gap:.6rem; flex-wrap:wrap; margin-top:.75rem; }
+    .upi-app { padding:.4rem .9rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:.78rem; font-weight:600; cursor:pointer; transition:all var(--t); background:var(--white); }
+    .upi-app:hover,.upi-app.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+    /* Card form */
+    .card-preview { background:linear-gradient(135deg,var(--navy) 0%,#1a4a73 100%); border-radius:var(--radius); padding:1.5rem; color:#fff; margin-bottom:1.25rem; position:relative; overflow:hidden; height:160px; }
+    .card-preview::before { content:''; position:absolute; right:-30px; top:-30px; width:150px; height:150px; background:rgba(255,255,255,.05); border-radius:50%; }
+    .card-preview::after  { content:''; position:absolute; right:30px; top:30px; width:100px; height:100px; background:rgba(255,255,255,.04); border-radius:50%; }
+    .cp-chip { width:36px; height:28px; background:var(--gold); border-radius:5px; margin-bottom:1rem; }
+    .cp-number { font-size:1.1rem; letter-spacing:.2em; font-weight:600; margin-bottom:.75rem; }
+    .cp-row { display:flex; justify-content:space-between; font-size:.75rem; opacity:.8; }
+    .cp-logo { position:absolute; bottom:1.25rem; right:1.25rem; font-size:1.4rem; opacity:.7; }
+    /* Order summary */
+    .co-summary { position:sticky; top:80px; }
+    .order-items-list { max-height:280px; overflow-y:auto; margin-bottom:1rem; }
+    .oi-row { display:flex; gap:.75rem; align-items:center; padding:.6rem 0; border-bottom:1px solid var(--bg2); }
+    .oi-emoji { width:44px; height:44px; background:var(--bg); border-radius:var(--radius-sm); display:grid; place-items:center; font-size:1.5rem; flex-shrink:0; }
+    .oi-name { flex:1; font-size:.82rem; font-weight:600; }
+    .oi-qty { font-size:.75rem; color:var(--text-lt); }
+    .oi-price { font-weight:700; font-size:.875rem; color:var(--navy); }
+    .summary-rows { margin-top:.75rem; }
+    .sr-row { display:flex; justify-content:space-between; font-size:.875rem; padding:.35rem 0; color:var(--text-md); }
+    .sr-row.grand { font-size:1.05rem; font-weight:700; color:var(--text); border-top:1px solid var(--border); padding-top:.7rem; margin-top:.3rem; }
+    /* Coupon */
+    .coupon-bar { display:flex; gap:.5rem; margin:1rem 0; }
+    .coupon-bar input { flex:1; padding:.6rem .9rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font-body); font-size:.875rem; outline:none; }
+    .coupon-bar input:focus { border-color:var(--navy); }
+    /* Success screen */
+    .success-screen { display:none; text-align:center; padding:3rem 2rem; }
+    .success-screen.show { display:block; animation:fadeIn .5s; }
+    .success-icon { width:80px; height:80px; background:#e6f6ef; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; margin:0 auto 1.5rem; }
+    @media(max-width:900px){ .checkout-layout{grid-template-columns:1fr} .co-summary{position:static} }
+    @media(max-width:480px){ .pay-methods{grid-template-columns:1fr} .input-row{grid-template-columns:1fr} .slot-grid{grid-template-columns:repeat(2,1fr)} }
+  </style>
+</head>
+<body>
+<script src="app.js"></script>
+<script>buildNav(); buildCartDrawer();</script>
+
+<div class="page-hero" style="padding:2rem">
+  <div class="page-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a><span>/</span>
+      <span>Checkout</span>
+    </div>
+    <h1>Secure Checkout</h1>
+    <p>Complete your order · Fast · Safe · Guaranteed</p>
+  </div>
+</div>
+
+<!-- Steps -->
+<div style="max-width:1100px;margin:1.5rem auto;padding:0 2rem">
+  <div class="steps-bar">
+    <div class="step done" id="step1"><div class="step-circle"><i class="fa fa-check"></i></div><div class="step-label">Cart</div></div>
+    <div class="step-line done"></div>
+    <div class="step active" id="step2"><div class="step-circle">2</div><div class="step-label">Delivery</div></div>
+    <div class="step-line" id="line2"></div>
+    <div class="step" id="step3"><div class="step-circle">3</div><div class="step-label">Payment</div></div>
+    <div class="step-line" id="line3"></div>
+    <div class="step" id="step4"><div class="step-circle">4</div><div class="step-label">Confirm</div></div>
+  </div>
+</div>
+
+<!-- Success Screen (hidden until order placed) -->
+<div class="success-screen" id="successScreen" style="max-width:600px;margin:0 auto;padding:3rem 2rem">
+  <div class="success-icon">✓</div>
+  <h2 style="font-family:var(--font-head);font-size:2rem;margin-bottom:.5rem">Order Placed!</h2>
+  <p style="color:var(--text-lt);margin-bottom:.5rem">Your order has been confirmed and will be delivered within 2 hours.</p>
+  <p style="font-weight:700;margin-bottom:2rem" id="orderNum"></p>
+  <div style="background:var(--bg);border-radius:var(--radius);padding:1.5rem;margin-bottom:2rem;text-align:left">
+    <div class="sr-row"><span>Estimated Delivery</span><span style="font-weight:700;color:var(--success)">Today, within 2 hours</span></div>
+    <div class="sr-row"><span>Payment Method</span><span id="confirmedPay">UPI</span></div>
+    <div class="sr-row grand"><span>Amount Paid</span><span id="confirmedTotal"></span></div>
+  </div>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="index.html" class="btn btn-navy btn-lg"><i class="fa fa-shopping-bag"></i> Continue Shopping</a>
+    <button class="btn btn-ghost btn-lg" onclick="toast('Invoice emailed to you!')"><i class="fa fa-file-invoice"></i> Download Invoice</button>
+  </div>
+</div>
+
+<div class="checkout-layout" id="checkoutLayout">
+  <!-- LEFT: Forms -->
+  <div>
+    <!-- Delivery Address -->
+    <div class="co-card">
+      <div class="co-card-head">
+        <div class="co-card-head-title"><i class="fa fa-map-marker-alt"></i> Delivery Address</div>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Address book opened')"><i class="fa fa-plus"></i> Add New</button>
+      </div>
+      <div class="co-body">
+        <div class="addr-options">
+          <label class="addr-option selected" onclick="selectAddr(this)">
+            <input type="radio" name="addr" checked/>
+            <div class="addr-info">
+              <strong>Home 🏠</strong>
+              <span>12, Anna Nagar East, Chennai - 600102<br/>Landmark: Near Apollo Hospital</span>
+            </div>
+            <span class="badge badge-success" style="margin-left:auto;flex-shrink:0">Default</span>
+          </label>
+          <label class="addr-option" onclick="selectAddr(this)">
+            <input type="radio" name="addr"/>
+            <div class="addr-info">
+              <strong>Office 🏢</strong>
+              <span>Tower B, DLF IT Park, Mount Poonamallee Road<br/>Chennai - 600089</span>
+            </div>
+          </label>
+        </div>
+        <div id="newAddrForm" style="display:none;margin-top:1rem">
+          <div class="input-row">
+            <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-control" placeholder="Recipient name"/></div>
+            <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-control" placeholder="+91 XXXXX XXXXX"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Address Line 1</label><input type="text" class="form-control" placeholder="House / Building / Street"/></div>
+          <div class="form-group"><label class="form-label">Address Line 2</label><input type="text" class="form-control" placeholder="Area / Landmark (optional)"/></div>
+          <div class="input-row">
+            <div class="form-group"><label class="form-label">City</label><input type="text" class="form-control" placeholder="Chennai"/></div>
+            <div class="form-group"><label class="form-label">Pincode</label><input type="text" class="form-control" placeholder="600001"/></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delivery Slot -->
+    <div class="co-card">
+      <div class="co-card-head">
+        <div class="co-card-head-title"><i class="fa fa-clock"></i> Delivery Slot</div>
+        <span class="badge badge-success">2-Hour Delivery Available</span>
+      </div>
+      <div class="co-body">
+        <p style="font-size:.8rem;color:var(--text-lt);margin-bottom:1rem">Select a convenient delivery window for today</p>
+        <div class="slot-grid">
+          <button class="slot-btn unavailable">8 AM – 10 AM<br/><small>Full</small></button>
+          <button class="slot-btn active"     onclick="selectSlot(this)">10 AM – 12 PM<br/><small>Available</small></button>
+          <button class="slot-btn"            onclick="selectSlot(this)">12 PM – 2 PM<br/><small>Available</small></button>
+          <button class="slot-btn"            onclick="selectSlot(this)">2 PM – 4 PM<br/><small>Available</small></button>
+          <button class="slot-btn"            onclick="selectSlot(this)">4 PM – 6 PM<br/><small>Available</small></button>
+          <button class="slot-btn"            onclick="selectSlot(this)">6 PM – 8 PM<br/><small>Available</small></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment -->
+    <div class="co-card">
+      <div class="co-card-head">
+        <div class="co-card-head-title"><i class="fa fa-lock"></i> Payment Method</div>
+        <div style="display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--success)"><i class="fa fa-shield-alt"></i> 256-bit SSL Secured</div>
+      </div>
+      <div class="co-body">
+        <div class="pay-methods">
+          <label class="pay-method selected" onclick="selectPay(this,'upi')">
+            <input type="radio" name="pay" checked/>
+            <div class="pay-method-icon">📱</div>
+            <div class="pay-method-info"><strong>UPI</strong><span>GPay, PhonePe, Paytm</span></div>
+          </label>
+          <label class="pay-method" onclick="selectPay(this,'card')">
+            <input type="radio" name="pay"/>
+            <div class="pay-method-icon">💳</div>
+            <div class="pay-method-info"><strong>Card</strong><span>Debit / Credit card</span></div>
+          </label>
+          <label class="pay-method" onclick="selectPay(this,'netbank')">
+            <input type="radio" name="pay"/>
+            <div class="pay-method-icon">🏦</div>
+            <div class="pay-method-info"><strong>Net Banking</strong><span>All major banks</span></div>
+          </label>
+          <label class="pay-method" onclick="selectPay(this,'cod')">
+            <input type="radio" name="pay"/>
+            <div class="pay-method-icon">💵</div>
+            <div class="pay-method-info"><strong>Cash on Delivery</strong><span>Pay at your door</span></div>
+          </label>
+        </div>
+
+        <!-- UPI Panel -->
+        <div id="upiPanel">
+          <div class="form-group"><label class="form-label">UPI ID</label>
+            <div style="position:relative">
+              <input type="text" class="form-control" id="upiId" placeholder="yourname@upi" style="padding-right:5rem"/>
+              <button style="position:absolute;right:.5rem;top:50%;transform:translateY(-50%)" class="btn btn-navy btn-sm" onclick="toast('UPI ID verified ✓')">Verify</button>
+            </div>
+          </div>
+          <div style="font-size:.78rem;color:var(--text-lt);margin-bottom:.75rem">— or pay with —</div>
+          <div class="upi-apps">
+            <button class="upi-app active" onclick="toggleUpi(this)">GPay</button>
+            <button class="upi-app" onclick="toggleUpi(this)">PhonePe</button>
+            <button class="upi-app" onclick="toggleUpi(this)">Paytm</button>
+            <button class="upi-app" onclick="toggleUpi(this)">BHIM</button>
+          </div>
+        </div>
+
+        <!-- Card Panel -->
+        <div id="cardPanel" style="display:none">
+          <div class="card-preview">
+            <div class="cp-chip"></div>
+            <div class="cp-number" id="cpNumber">•••• •••• •••• ••••</div>
+            <div class="cp-row">
+              <div><div style="font-size:.6rem;opacity:.6;margin-bottom:.1rem">CARD HOLDER</div><span id="cpName">YOUR NAME</span></div>
+              <div><div style="font-size:.6rem;opacity:.6;margin-bottom:.1rem">EXPIRES</div><span id="cpExpiry">MM/YY</span></div>
+            </div>
+            <div class="cp-logo">💳</div>
+          </div>
+          <div class="form-group"><label class="form-label">Card Number</label>
+            <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19"
+              oninput="formatCard(this)" onkeyup="document.getElementById('cpNumber').textContent=this.value||'•••• •••• •••• ••••'"/>
+          </div>
+          <div class="input-row">
+            <div class="form-group"><label class="form-label">Card Holder Name</label>
+              <input type="text" class="form-control" placeholder="As printed on card"
+                oninput="document.getElementById('cpName').textContent=this.value.toUpperCase()||'YOUR NAME'"/>
+            </div>
+            <div class="form-group"><label class="form-label">Expiry Date</label>
+              <input type="text" class="form-control" placeholder="MM/YY" maxlength="5"
+                oninput="formatExpiry(this)" onkeyup="document.getElementById('cpExpiry').textContent=this.value||'MM/YY'"/>
+            </div>
+          </div>
+          <div class="form-group" style="max-width:140px"><label class="form-label">CVV</label>
+            <input type="password" class="form-control" placeholder="•••" maxlength="3"/>
+          </div>
+        </div>
+
+        <!-- Net Banking Panel -->
+        <div id="netbankPanel" style="display:none">
+          <div class="form-group"><label class="form-label">Select Your Bank</label>
+            <select class="form-control">
+              <option>State Bank of India</option><option>HDFC Bank</option><option>ICICI Bank</option>
+              <option>Axis Bank</option><option>Kotak Mahindra Bank</option><option>Punjab National Bank</option><option>Bank of Baroda</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- COD Panel -->
+        <div id="codPanel" style="display:none">
+          <div style="background:#fef3e2;border-radius:var(--radius-sm);padding:1rem;font-size:.875rem;color:var(--warning);display:flex;gap:.6rem">
+            <i class="fa fa-info-circle" style="margin-top:.15rem"></i>
+            <span>Cash on Delivery is available. Please keep exact change ready. COD charges of ₹29 will be added.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Summary -->
+  <div class="co-summary">
+    <div class="co-card">
+      <div class="co-card-head"><div class="co-card-head-title"><i class="fa fa-shopping-bag"></i> Order Summary</div></div>
+      <div class="co-body">
+        <div class="order-items-list" id="orderItemsList"></div>
+
+        <div class="coupon-bar">
+          <input type="text" placeholder="Coupon code (try FRESH20)" id="couponInput"/>
+          <button class="btn btn-ghost btn-sm" onclick="applyCoupon()">Apply</button>
+        </div>
+
+        <div class="summary-rows" id="summaryRows"></div>
+
+        <button class="btn btn-navy btn-lg btn-full" style="margin-top:1.25rem" id="placeOrderBtn" onclick="placeOrder()">
+          <i class="fa fa-lock"></i> Place Order Securely
+        </button>
+        <div style="display:flex;justify-content:center;gap:1.5rem;margin-top:1rem">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/200px-Mastercard-logo.svg.png" height="20" style="opacity:.5" alt="Mastercard"/>
+          <span style="font-size:.7rem;color:var(--text-lt);align-self:center">VISA · RuPay · UPI</span>
+        </div>
+        <div style="text-align:center;font-size:.72rem;color:var(--text-lt);margin-top:.5rem">
+          <i class="fa fa-lock"></i> 100% Secure · Encrypted · PCI Compliant
+        </div>
+      </div>
+    </div>
+  </div>
+<
