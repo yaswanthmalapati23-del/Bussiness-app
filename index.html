@@ -1,109 +1,198 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FreshMart — Local Supermarket</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexMart — Premium Supermarket</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ── Homepage-specific ── */
+    #hero { padding: 5rem 2rem 6rem; }
+    .hero-inner { max-width:1400px; margin:0 auto; }
+    #features-strip { background:var(--navy); }
+    .promo-section { background:var(--bg2); padding:3rem 0; }
+    .newsletter { background:linear-gradient(110deg,var(--navy) 0%,#0e3a5f 100%); padding:3.5rem 2rem; margin-top:3rem; }
+    .newsletter-inner { max-width:600px; margin:0 auto; text-align:center; }
+    .newsletter h2 { font-family:var(--font-head); font-size:2rem; color:#fff; margin-bottom:.5rem; }
+    .newsletter p { color:rgba(255,255,255,.65); margin-bottom:1.5rem; }
+    .nl-form { display:flex; gap:.5rem; max-width:440px; margin:0 auto; }
+    .nl-form input { flex:1; padding:.7rem 1.1rem; border:none; border-radius:var(--radius-sm); font-family:var(--font-body); font-size:.9rem; outline:none; }
+    .nl-form button { flex-shrink:0; }
+  </style>
 </head>
 <body>
+<script src="app.js"></script>
+<script>
+  buildNav('home');
+  buildCartDrawer();
+</script>
 
-  <!-- ===== PRELOADER ===== -->
-  <div id="preloader">
-    <div class="preloader-inner">
-      <div class="leaf-spin">🌿</div>
-      <p>FreshMart</p>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow"><span>Chennai's #1 Online Supermarket</span></div>
+      <h1>Fresh Groceries,<br/><em>Delivered</em> to Your Door.</h1>
+      <p>From farm-fresh produce to artisan goods — over 500+ premium products available for 2-hour delivery in your neighbourhood.</p>
+      <div class="hero-actions">
+        <button class="btn btn-gold btn-lg" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+          <i class="fa fa-shopping-basket"></i> Shop Now
+        </button>
+        <a href="#offers" class="btn btn-outline btn-lg" style="color:#fff;border-color:rgba(255,255,255,.4)">View Offers</a>
+      </div>
+      <div class="hero-stats">
+        <div class="h-stat"><strong>500+</strong><span>Products</span></div>
+        <div class="h-stat"><strong>10k+</strong><span>Customers</span></div>
+        <div class="h-stat"><strong>4.9★</strong><span>Rating</span></div>
+        <div class="h-stat"><strong>2 Hr</strong><span>Delivery</span></div>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- ===== NAVBAR ===== -->
-  <nav id="navbar">
-    <div class="nav-container">
-      <div class="nav-logo">
-        <span class="logo-icon">🛒</span>
-        <span class="logo-text">FreshMart</span>
-      </div>
-      <div class="nav-search">
-        <i class="fa fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search products..." />
-      </div>
-      <div class="nav-actions">
-        <button class="nav-btn" id="cartBtn">
-          <i class="fa fa-shopping-bag"></i>
-          <span class="cart-count" id="cartCount">0</span>
-        </button>
-        <button class="nav-btn" id="wishlistBtn">
-          <i class="fa fa-heart"></i>
-          <span class="cart-count" id="wishCount">0</span>
-        </button>
-      </div>
-    </div>
-  </nav>
+<!-- FEATURES -->
+<div id="features-strip">
+  <div class="features-inner">
+    <div class="feat-item"><i class="fa fa-truck"></i><span><strong>Free Delivery</strong> above ₹499</span></div>
+    <div class="feat-item"><i class="fa fa-leaf"></i><span><strong>100% Organic</strong> options available</span></div>
+    <div class="feat-item"><i class="fa fa-star"></i><span><strong>Premium Quality</strong> guaranteed</span></div>
+    <div class="feat-item"><i class="fa fa-clock"></i><span><strong>2-Hour Delivery</strong> in your area</span></div>
+    <div class="feat-item"><i class="fa fa-undo"></i><span><strong>Easy Returns</strong> within 24 hours</span></div>
+  </div>
+</div>
 
-  <!-- ===== HERO ===== -->
-  <section id="hero">
-    <div class="hero-content">
-      <span class="hero-tag">Fresh · Local · Quality</span>
-      <h1>Your <em>neighbourhood</em><br/>store, reimagined.</h1>
-      <p>Hand-picked produce, artisan goods & everyday essentials — delivered fresh to your door.</p>
-      <div class="hero-btns">
-        <button class="btn-primary" onclick="scrollToProducts()">Shop Now</button>
-        <button class="btn-outline" onclick="scrollToOffers()">Today's Deals</button>
+<!-- PROMO BANNERS -->
+<div class="promo-section" id="offers">
+  <div class="section" style="padding-top:2rem;padding-bottom:0">
+    <div class="section-head"><div><div class="section-title">Today's <em>Deals</em></div><div class="section-sub">Limited time offers — grab them before they're gone</div></div></div>
+    <div class="promo-grid">
+      <div class="promo-card p1" onclick="filterCat('Vegetables')">
+        <div class="promo-bg-emoji">🥬</div>
+        <div class="promo-tag">Flash Sale</div>
+        <h3>Up to 40% Off<br/>Fresh Vegetables</h3>
+        <button class="btn btn-gold btn-sm">Shop Vegetables</button>
+      </div>
+      <div class="promo-card p2" onclick="filterCat('Fruits')">
+        <div class="promo-bg-emoji">🍎</div>
+        <div class="promo-tag">Weekend Special</div>
+        <h3>Premium Fruits<br/>At Best Prices</h3>
+        <button class="btn btn-navy btn-sm">Shop Fruits</button>
+      </div>
+      <div class="promo-card p3" onclick="filterCat('Dairy')">
+        <div class="promo-bg-emoji">🥛</div>
+        <div class="promo-tag">Buy 2 Get 1</div>
+        <h3>All Dairy &<br/>Artisan Cheese</h3>
+        <button class="btn btn-navy btn-sm">Shop Dairy</button>
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="hero-card card-1">🥦 <span>Fresh Veggies</span></div>
-      <div class="hero-card card-2">🧀 <span>Dairy & Cheese</span></div>
-      <div class="hero-card card-3">🍞 <span>Artisan Bakery</span></div>
-      <div class="hero-badge">
-        <span class="badge-num">500+</span>
-        <span class="badge-txt">Products</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="products">
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Our <em>Products</em></div>
+        <div class="section-sub">Fresh, handpicked & delivered with care</div>
+      </div>
+      <a href="#" onclick="filterCat('All')" class="btn btn-ghost btn-sm">View All <i class="fa fa-arrow-right"></i></a>
+    </div>
+
+    <!-- Category Filter Pills -->
+    <div class="cat-pills" id="catPills"></div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="result-count" id="resultCount"></span>
+      </div>
+      <div class="toolbar-right">
+        <label style="font-size:.82rem;color:var(--text-lt)">Sort:</label>
+        <select class="sort-select" id="sortSel">
+          <option value="default">Featured</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="rating">Best Rated</option>
+          <option value="name">Name A–Z</option>
+        </select>
       </div>
     </div>
-    <div class="hero-wave">
-      <svg viewBox="0 0 1200 80" preserveAspectRatio="none">
-        <path d="M0,40 C300,80 900,0 1200,40 L1200,80 L0,80 Z" fill="var(--bg)"/>
-      </svg>
-    </div>
-  </section>
 
-  <!-- ===== STATS STRIP ===== -->
-  <section id="stats">
-    <div class="stat-item"><i class="fa fa-truck"></i><span><strong>Free Delivery</strong> above ₹499</span></div>
-    <div class="stat-item"><i class="fa fa-leaf"></i><span><strong>100% Organic</strong> produce available</span></div>
-    <div class="stat-item"><i class="fa fa-star"></i><span><strong>4.9★</strong> trusted by 10k+ customers</span></div>
-    <div class="stat-item"><i class="fa fa-clock"></i><span><strong>2-hr Delivery</strong> in your area</span></div>
-  </section>
+    <div class="products-grid" id="productsGrid"></div>
+    <div class="no-results hidden" id="noRes"><div class="nr-icon">🔍</div><p>No products found. Try a different search or category.</p></div>
+  </div>
+</div>
 
-  <!-- ===== CATEGORIES ===== -->
-  <section id="categories">
-    <div class="section-header">
-      <h2>Browse <em>Categories</em></h2>
-      <p>Everything you need, all in one place</p>
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <div class="newsletter-inner">
+    <h2>Get <em>Exclusive</em> Deals</h2>
+    <p>Subscribe to our newsletter and be the first to know about flash sales, new arrivals & seasonal offers.</p>
+    <div class="nl-form">
+      <input type="email" placeholder="Enter your email address" />
+      <button class="btn btn-gold" onclick="toast('🎉 Subscribed! Check your inbox.')">Subscribe</button>
     </div>
-    <div class="categories-grid" id="categoriesGrid"></div>
-  </section>
+  </div>
+</div>
 
-  <!-- ===== OFFERS BANNER ===== -->
-  <section id="offers">
-    <div class="offer-card hot">
-      <div class="offer-text">
-        <span class="offer-tag">Flash Sale</span>
-        <h3>Up to 40% off<br/>on Fresh Produce</h3>
-        <button class="btn-white" onclick="filterCategory('Vegetables')">Grab Offer</button>
-      </div>
-      <div class="offer-emoji">🥬</div>
-    </div>
-    <div class="offer-card cool">
-      <div class="offer-text">
-        <span class="offer-tag">Weekend Special</span>
-        <h3>Buy 2 Get 1 Free<br/>on Dairy Items</h3>
-        <button class="btn-white" onclick="filterCategory('Dairy')">Shop Now</button>
-      </div>
-      <div class="offer-emoji">🥛</div>
-    </div>
-  </section>
+<script>
+  buildFooter();
 
-  <!-- ===== PRODUCTS ===== -->
+  let activeCat = 'All', activeSort = 'default', searchQ = '';
+
+  // Render pills
+  function renderPills() {
+    const el = document.getElementById('catPills');
+    el.innerHTML = CATEGORIES.map(c =>
+      `<button class="cat-pill ${activeCat===c.name?'active':''}" onclick="filterCat('${c.name}')">
+         <span class="pill-icon">${c.icon}</span> ${c.name}
+       </button>`
+    ).join('');
+  }
+
+  function filterCat(cat) {
+    activeCat = cat;
+    renderPills();
+    renderGrid();
+    document.getElementById('products').scrollIntoView({behavior:'smooth'});
+  }
+
+  function renderGrid() {
+    let list = [...PRODUCTS];
+    if (activeCat !== 'All') list = list.filter(p => p.cat === activeCat);
+    if (searchQ) list = list.filter(p => p.name.toLowerCase().includes(searchQ) || p.cat.toLowerCase().includes(searchQ));
+    switch (activeSort) {
+      case 'price-asc':  list.sort((a,b) => a.price-b.price); break;
+      case 'price-desc': list.sort((a,b) => b.price-a.price); break;
+      case 'rating':     list.sort((a,b) => b.rating-a.rating); break;
+      case 'name':       list.sort((a,b) => a.name.localeCompare(b.name)); break;
+    }
+    const grid = document.getElementById('productsGrid');
+    const noRes = document.getElementById('noRes');
+    const rc = document.getElementById('resultCount');
+    rc.textContent = `${list.length} product${list.length!==1?'s':''} found`;
+    if (list.length === 0) { grid.innerHTML=''; noRes.classList.remove('hidden'); return; }
+    noRes.classList.add('hidden');
+    grid.innerHTML = list.map((p,i) => productCardHTML(p, i*0.04)).join('');
+  }
+
+  document.getElementById('sortSel').addEventListener('change', e => { activeSort = e.target.value; renderGrid(); });
+
+  window.onNavSearch = q => { searchQ = q.toLowerCase(); renderGrid(); };
+
+  // IntersectionObserver fade-in for sections
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; } });
+  }, {threshold:.1});
+  ['#offers','#products'].forEach(s => {
+    const el = document.querySelector(s);
+    if(el){ el.style.cssText+='opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s'; io.observe(el); }
+  });
+
+  renderPills();
+  renderGrid();
+</script>
+</body>
+  </html>
+  
