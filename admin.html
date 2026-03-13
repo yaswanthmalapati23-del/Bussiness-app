@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin Dashboard — NexMart</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body { display:flex; min-height:100vh; background:var(--bg); }
+    .admin-sidebar {
+      width:240px; min-height:100vh; background:var(--navy); flex-shrink:0;
+      display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;
+    }
+    .sidebar-logo { padding:1.5rem 1.25rem; border-bottom:1px solid rgba(255,255,255,.08); }
+    .sidebar-logo .logo-main { color:#fff; font-family:var(--font-head); font-size:1.4rem; display:block; }
+    .sidebar-logo .logo-sub  { color:var(--gold-light); font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; }
+    .sidebar-user { padding:1rem 1.25rem; border-bottom:1px solid rgba(255,255,255,.08); display:flex; align-items:center; gap:.75rem; }
+    .sidebar-avatar { width:36px; height:36px; background:var(--gold); border-radius:50%; display:grid; place-items:center; font-size:.8rem; font-weight:700; color:var(--navy); flex-shrink:0; }
+    .sidebar-user-info strong { display:block; font-size:.82rem; color:#fff; }
+    .sidebar-user-info span { font-size:.72rem; color:var(--gold-light); }
+    .sidebar-nav { padding:.75rem 0; flex:1; }
+    .sidebar-section { padding:.3rem 1.25rem .2rem; font-size:.65rem; font-weight:700; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:.12em; margin-top:.5rem; }
+    .sidebar-link { display:flex; align-items:center; gap:.75rem; padding:.65rem 1.25rem; font-size:.84rem; color:rgba(255,255,255,.65); transition:all var(--t); cursor:pointer; border-left:3px solid transparent; }
+    .sidebar-link i { width:18px; text-align:center; flex-shrink:0; }
+    .sidebar-link:hover { background:rgba(255,255,255,.07); color:#fff; border-left-color:rgba(255,255,255,.2); }
+    .sidebar-link.active { background:rgba(201,168,76,.12); color:var(--gold-light); border-left-color:var(--gold); }
+    .sidebar-link .badge { margin-left:auto; }
+    .sidebar-foot { padding:1rem 1.25rem; border-top:1px solid rgba(255,255,255,.08); }
+    .admin-main { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+    .admin-topbar { background:var(--white); border-bottom:1px solid var(--border); padding:.9rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; box-shadow:var(--shadow-sm); }
+    .at-title { font-family:var(--font-head); font-size:1.15rem; font-weight:700; }
+    .at-right { display:flex; align-items:center; gap:1rem; }
+    .at-date { font-size:.78rem; color:var(--text-lt); }
+    .admin-content { padding:2rem; flex:1; overflow-y:auto; }
+    /* Page panels */
+    .admin-page { display:none; }
+    .admin-page.active { display:block; animation:fadeIn .3s; }
+    /* KPI Cards */
+    .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; margin-bottom:2rem; }
+    .kpi-card { background:var(--white); border-radius:var(--radius); border:1px solid var(--border); padding:1.5rem; display:flex; gap:1rem; align-items:center; }
+    .kpi-icon { width:52px; height:52px; border-radius:var(--radius-sm); display:grid; place-items:center; font-size:1.3rem; flex-shrink:0; }
+    .kpi-icon.blue   { background:#e8f0fe; color:#1a73e8; }
+    .kpi-icon.green  { background:var(--bg2); color:var(--success); }
+    .kpi-icon.gold   { background:#fdf3d7; color:#946c00; }
+    .kpi-icon.red    { background:#fdecea; color:var(--danger); }
+    .kpi-info strong { display:block; font-family:var(--font-head); font-size:1.8rem; line-height:1.1; }
+    .kpi-info span   { font-size:.78rem; color:var(--text-lt); }
+    .kpi-trend { margin-top:.3rem; font-size:.75rem; }
+    .kpi-trend.up { color:var(--success); }
+    .kpi-trend.down { color:var(--danger); }
+    /* Charts placeholder */
+    .charts-grid { display:grid; grid-template-columns:1.5fr 1fr; gap:1.25rem; margin-bottom:2rem; }
+    .chart-box { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; }
+    .chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; }
+    .chart-title { font-family:var(--font-head); font-size:1rem; font-weight:700; }
+    .mini-chart { height:180px; display:flex; align-items:flex-end; gap:8px; padding-top:.5rem; }
+    .bar { flex:1; background:var(--navy); border-radius:4px 4px 0 0; position:relative; transition:opacity var(--t); cursor:pointer; }
+    .bar:hover { opacity:.8; }
+    .bar span { position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); font-size:.65rem; color:var(--text-lt); white-space:nowrap; }
+    .donut-wrap { display:flex; align-items:center; justify-content:center; gap:2rem; }
+    .donut-svg { width:130px; height:130px; }
+    .donut-legend { display:flex; flex-direction:column; gap:.5rem; }
+    .dl-item { display:flex; align-items:center; gap:.5rem; font-size:.78rem; }
+    .dl-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    /* Product manager */
+    .pm-toolbar { display:flex; gap:1rem; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; }
+    .pm-toolbar input { flex:1; min-width:200px; padding:.55rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font-body); font-size:.875rem; outline:none; }
+    .pm-toolbar input:focus { border-color:var(--navy); }
+    .stock-low  { color:var(--danger); font-weight:600; }
+    .stock-ok   { color:var(--success); font-weight:600; }
+    .stock-med  { color:var(--warning); font-weight:600; }
+    /* Orders */
+    .order-status { padding:.25rem .75rem; border-radius:99px; font-size:.72rem; font-weight:700; }
+    .os-delivered { background:#e6f6ef; color:var(--success); }
+    .os-pending   { background:#fef3e2; color:var(--warning); }
+    .os-cancelled { background:#fdecea; color:var(--danger); }
+    .os-transit   { background:var(--navy-pale); color:var(--navy); }
+    /* Analytics */
+    .analytics-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; margin-bottom:1.5rem; }
+    .an-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; }
+    .an-card h4 { font-family:var(--font-head); font-size:.95rem; margin-bottom:.75rem; color:var(--text-md); }
+    .progress-item { margin-bottom:.75rem; }
+    .progress-label { display:flex; justify-content:space-between; font-size:.78rem; color:var(--text-md); margin-bottom:.3rem; }
+    .progress-bar { height:7px; background:var(--bg2); border-radius:99px; overflow:hidden; }
+    .progress-fill { height:100%; border-radius:99px; background:var(--navy); transition:width 1s ease; }
+    @media(max-width:1100px){ .kpi-grid{grid-template-columns:repeat(2,1fr)} .charts-grid{grid-template-columns:1fr} .analytics-grid{grid-template-columns:1fr 1fr} }
+    @media(max-width:768px){ .admin-sidebar{display:none} .kpi-grid{grid-template-columns:1fr 1fr} }
+  </style>
+</head>
+<body>
+<script src="app.js"></script>
+<script>
+  // Auth guard
+  if (!Store.user || Store.user.role !== 'admin') {
+    location.href = 'login.html';
+  }
+</script>
+
+<!-- SIDEBAR -->
+<aside class="admin-sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-main">NexMart</span>
+    <span class="logo-sub">Admin Panel</span>
+  </div>
+  <div class="sidebar-user">
+    <div class="sidebar-avatar">AU</div>
+    <div class="sidebar-user-info">
+      <strong>Admin User</strong>
+      <span>Super Admin</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Main</div>
+    <div class="sidebar-link active" onclick="showPage('dashboard',this)"><i class="fa fa-th-large"></i> Dashboard</div>
+    <div class="sidebar-link" onclick="showPage('orders',this)"><i class="fa fa-box"></i> Orders <span class="badge badge-danger">12</span></div>
+    <div class="sidebar-section">Catalogue</div>
+    <div class="sidebar-link" onclick="showPage('products',this)"><i class="fa fa-tags"></i> Products</div>
+    <div class="sidebar-link" onclick="showPage('inventory',this)"><i class="fa fa-warehouse"></i> Inventory</div>
+    <div class="sidebar-section">Reports</div>
+    <div class="sidebar-link" onclick="showPage('analytics',this)"><i class="fa fa-chart-bar"></i> Analytics</div>
+    <div class="sidebar-link" onclick="showPage('customers',this)"><i class="fa fa-users"></i> Customers</div>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="sidebar-link" onclick="window.handleLogout()" style="border-left:none"><i class="fa fa-sign-out-alt"></i> Logout</div>
+    <a href="index.html" class="sidebar-link" style="border-left:none"><i class="fa fa-store"></i> View Store</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="admin-main">
+  <div class="admin-topbar">
+    <span class="at-title" id="pageTitle">Dashboard</span>
+    <div class="at-right">
+      <span class="at-date" id="todayDate"></span>
+      <button class="btn btn-navy btn-sm"><i class="fa fa-bell"></i></button>
+    </div>
+  </div>
+
+  <div class="admin-content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="admin-page active" id="page-dashboard">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon blue"><i class="fa fa-shopping-cart"></i></div>
+          <div class="kpi-info"><strong>1,248</strong><span>Total Orders</span><div class="kpi-trend up">▲ 12.5% vs last month</div></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon green"><i class="fa fa-rupee-sign"></i></div>
+          <div class="kpi-info"><strong>₹3.84L</strong><span>Monthly Revenue</span><div class="kpi-trend up">▲ 8.3% vs last month</div></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon gold"><i class="fa fa-users"></i></div>
+          <div class="kpi-info"><strong>10,492</strong><span>Total Customers</span><div class="kpi-trend up">▲ 5.1% vs last month</div></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon red"><i class="fa fa-exclamation-triangle"></i></div>
+          <div class="kpi-info"><strong>7</strong><span>Low Stock Items</span><div class="kpi-trend down">▼ Needs attention</div></div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-box">
+          <div class="chart-header">
+            <span class="chart-title">Weekly Sales Revenue</span>
+            <span class="badge badge-navy">This Week</span>
+          </div>
+          <div class="mini-chart" id="salesChart"></div>
+          <div style="display:flex;justify-content:center;gap:1.5rem;margin-top:1.5rem;font-size:.75rem;color:var(--text-lt)">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header"><span class="chart-title">Sales by Category</span></div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" viewBox="0 0 42 42">
+              <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e8eef5" stroke-width="6"/>
+              <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#0a2540" stroke-width="6" stroke-dasharray="28 72" stroke-dashoffset="25"/>
+              <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#c9a84c" stroke-width="6" stroke-dasharray="22 78" stroke-dashoffset="-3"/>
+              <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#00875a" stroke-width="6" stroke-dasharray="18 82" stroke-dashoffset="-25"/>
+              <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e67e22" stroke-width="6" stroke-dasharray="14 86" stroke-dashoffset="-43"/>
+              <text x="21" y="24" text-anchor="middle" font-size="5" font-family="Cormorant Garamond,serif" fill="#0a2540" font-weight="bold">Sales</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="dl-item"><div class="dl-dot" style="background:#0a2540"></div><span>Vegetables 28%</span></div>
+              <div class="dl-item"><div class="dl-dot" style="background:#c9a84c"></div><span>Fruits 22%</span></div>
+              <div class="dl-item"><div class="dl-dot" style="background:#00875a"></div><span>Dairy 18%</span></div>
+              <div class="dl-item"><div class="dl-dot" style="background:#e67e22"></div><span>Bakery 14%</span></div>
+              <div class="dl-item"><div class="dl-dot" style="background:#e8eef5"></div><span>Other 18%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Recent Orders</span>
+          <button class="btn btn-ghost btn-sm" onclick="showPage('orders',document.querySelector('[onclick*=orders]'))">View All</button>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="recentOrders"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ORDERS ── -->
+    <div class="admin-page" id="page-orders">
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-body" style="display:flex;gap:1rem;flex-wrap:wrap;padding:1rem 1.5rem">
+          <div class="kpi-card" style="flex:1;min-width:160px;border:none;padding:.75rem;box-shadow:none;background:var(--bg)">
+            <div class="kpi-icon blue" style="width:38px;height:38px;font-size:1rem"><i class="fa fa-clock"></i></div>
+            <div class="kpi-info"><strong style="font-size:1.4rem">32</strong><span>Pending</span></div>
+          </div>
+          <div class="kpi-card" style="flex:1;min-width:160px;border:none;padding:.75rem;box-shadow:none;background:var(--bg)">
+            <div class="kpi-icon gold" style="width:38px;height:38px;font-size:1rem"><i class="fa fa-truck"></i></div>
+            <div class="kpi-info"><strong style="font-size:1.4rem">18</strong><span>In Transit</span></div>
+          </div>
+          <div class="kpi-card" style="flex:1;min-width:160px;border:none;padding:.75rem;box-shadow:none;background:var(--bg)">
+            <div class="kpi-icon green" style="width:38px;height:38px;font-size:1rem"><i class="fa fa-check"></i></div>
+            <div class="kpi-info"><strong style="font-size:1.4rem">1,182</strong><span>Delivered</span></div>
+          </div>
+          <div class="kpi-card" style="flex:1;min-width:160px;border:none;padding:.75rem;box-shadow:none;background:var(--bg)">
+            <div class="kpi-icon red" style="width:38px;height:38px;font-size:1rem"><i class="fa fa-times"></i></div>
+            <div class="kpi-info"><strong style="font-size:1.4rem">16</strong><span>Cancelled</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">All Orders</span>
+          <div style="display:flex;gap:.5rem">
+            <select class="sort-select" id="orderFilter" onchange="renderOrders()">
+              <option value="">All Status</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Pending">Pending</option>
+              <option value="In Transit">In Transit</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap"><table><thead><tr><th>#Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead><tbody id="ordersBody"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PRODUCTS ── -->
+    <div class="admin-page" id="page-products">
+      <div class="pm-toolbar">
+        <input type="text" id="productSearch" placeholder="🔍 Search products by name or category..." oninput="renderProductsAdmin()" />
+        <select class="sort-select" id="catFilter" onchange="renderProductsAdmin()">
+          <option value="">All Categories</option>
+          <option>Vegetables</option><option>Fruits</option><option>Dairy</option>
+          <option>Bakery</option><option>Beverages</option><option>Snacks</option><option>Grains</option>
+        </select>
+        <button class="btn btn-navy btn-sm" onclick="toast('Add product form would open here')"><i class="fa fa-plus"></i> Add Product</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Product Catalogue</span><span class="badge badge-navy" id="prodCount"></span></div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap"><table><thead><tr><th>Emoji</th><th>Name</th><th>Category</th><th>Price</th><th>Old Price</th><th>Rating</th><th>Reviews</th><th>Badge</th><th>Actions</th></tr></thead><tbody id="productsAdminBody"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INVENTORY ── -->
+    <div class="admin-page" id="page-inventory">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Inventory Status</span><button class="btn btn-navy btn-sm" onclick="toast('Export CSV — feature available in production')"><i class="fa fa-download"></i> Export</button></div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>SKU</th><th>In Stock</th><th>Reorder Level</th><th>Status</th><th>Last Updated</th></tr></thead><tbody id="inventoryBody"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ANALYTICS ── -->
+    <div class="admin-page" id="page-analytics">
+      <div class="analytics-grid">
+        <div class="an-card">
+          <h4>Top Selling Products</h4>
+          <div id="topSellers"></div>
+        </div>
+        <div class="an-card">
+          <h4>Category Performance</h4>
+          <div id="catPerf"></div>
+        </div>
+        <div class="an-card">
+          <h4>Customer Metrics</h4>
+          <div style="display:flex;flex-direction:column;gap:.85rem">
+            <div><div style="font-size:.78rem;color:var(--text-lt)">Avg Order Value</div><div style="font-family:var(--font-head);font-size:1.6rem;font-weight:700">₹487</div></div>
+            <div><div style="font-size:.78rem;color:var(--text-lt)">Repeat Purchase Rate</div><div style="font-family:var(--font-head);font-size:1.6rem;font-weight:700">68.4%</div></div>
+            <div><div style="font-size:.78rem;color:var(--text-lt)">Cart Abandonment</div><div style="font-family:var(--font-head);font-size:1.6rem;color:var(--danger);font-weight:700">23.1%</div></div>
+            <div><div style="font-size:.78rem;color:var(--text-lt)">NPS Score</div><div style="font-family:var(--font-head);font-size:1.6rem;color:var(--success);font-weight:700">72</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Monthly Revenue Trend (₹)</span></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:flex-end;gap:12px;height:200px" id="revenueChart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CUSTOMERS ── -->
+    <div class="admin-page" id="page-customers">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Customer Database</span><button class="btn btn-ghost btn-sm" onclick="toast('Export CSV')"><i class="fa fa-download"></i> Export</button></div>
+        <div class="card-body" style="padding:0">
+          <div
