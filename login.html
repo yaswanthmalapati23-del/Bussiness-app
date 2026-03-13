@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — NexMart</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body { display:flex; flex-direction:column; min-height:100vh; background:var(--bg); }
+    .auth-wrap { flex:1; display:grid; grid-template-columns:1fr 1fr; min-height:calc(100vh - 110px); }
+    /* Left panel */
+    .auth-left {
+      background:linear-gradient(140deg,var(--navy) 0%,#0e3a5f 100%);
+      padding:4rem 3rem; display:flex; flex-direction:column; justify-content:center;
+      position:relative; overflow:hidden;
+    }
+    .auth-left::before {
+      content:''; position:absolute; inset:0;
+      background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .auth-left-inner { position:relative; z-index:1; max-width:400px; }
+    .auth-logo { font-family:var(--font-head); font-size:2rem; color:#fff; margin-bottom:3rem; display:block; }
+    .auth-logo span { display:block; font-size:.65rem; color:var(--gold-light); font-family:var(--font-body); letter-spacing:.2em; text-transform:uppercase; }
+    .auth-left h2 { font-family:var(--font-head); font-size:2.4rem; color:#fff; line-height:1.15; margin-bottom:1rem; }
+    .auth-left h2 em { color:var(--gold-light); font-style:italic; }
+    .auth-left p { color:rgba(255,255,255,.65); font-size:.95rem; line-height:1.7; margin-bottom:2.5rem; }
+    .auth-perks { display:flex; flex-direction:column; gap:.85rem; }
+    .auth-perk { display:flex; align-items:center; gap:.85rem; color:rgba(255,255,255,.8); font-size:.875rem; }
+    .auth-perk-icon { width:38px; height:38px; background:rgba(201,168,76,.2); border-radius:var(--radius-sm); display:grid; place-items:center; color:var(--gold-light); flex-shrink:0; }
+    /* Right panel */
+    .auth-right { padding:4rem 3rem; display:flex; flex-direction:column; justify-content:center; align-items:center; background:var(--white); }
+    .auth-card { width:100%; max-width:420px; }
+    .auth-tabs { display:flex; gap:0; border:1.5px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; margin-bottom:2rem; }
+    .auth-tab { flex:1; padding:.65rem; background:transparent; border:none; font-family:var(--font-body); font-size:.875rem; font-weight:600; cursor:pointer; color:var(--text-lt); transition:all var(--t); }
+    .auth-tab.active { background:var(--navy); color:#fff; }
+    .auth-form { display:none; animation:fadeIn .3s; }
+    .auth-form.active { display:block; }
+    .input-icon-wrap { position:relative; }
+    .input-icon-wrap .form-control { padding-left:2.75rem; }
+    .input-icon-wrap .fi-icon { position:absolute; left:.9rem; top:50%; transform:translateY(-50%); color:var(--text-lt); font-size:.9rem; pointer-events:none; }
+    .pw-toggle { position:absolute; right:.9rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-lt); font-size:.85rem; transition:color var(--t); }
+    .pw-toggle:hover { color:var(--navy); }
+    .form-check { display:flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--text-md); margin-bottom:1.1rem; cursor:pointer; }
+    .form-check input { width:16px; height:16px; accent-color:var(--navy); cursor:pointer; }
+    .form-divider { display:flex; align-items:center; gap:1rem; margin:1.25rem 0; color:var(--text-lt); font-size:.78rem; }
+    .form-divider::before,.form-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+    .social-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:.75rem; padding:.7rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:#fff; font-family:var(--font-body); font-size:.875rem; font-weight:500; cursor:pointer; transition:all var(--t); margin-bottom:.6rem; }
+    .social-btn:hover { background:var(--bg); border-color:var(--navy); }
+    .auth-footer-note { text-align:center; font-size:.8rem; color:var(--text-lt); margin-top:1.5rem; }
+    .auth-footer-note a { color:var(--navy); font-weight:600; }
+    .role-note { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:.75rem 1rem; font-size:.78rem; color:var(--text-md); margin-bottom:1.25rem; line-height:1.6; }
+    .role-note strong { color:var(--navy); }
+    @media(max-width:768px){ .auth-wrap{grid-template-columns:1fr} .auth-left{display:none} .auth-right{padding:2rem 1.25rem} }
+  </style>
+</head>
+<body>
+<script src="app.js"></script>
+<script>
+  // Simple topbar only
+  document.write(`<div class="topbar"><strong>Free delivery</strong> on orders above ₹499 &nbsp;|&nbsp; <strong>2-hr delivery</strong> available in your area</div>`);
+</script>
+
+<div class="auth-wrap">
+  <!-- LEFT PANEL -->
+  <div class="auth-left">
+    <div class="auth-left-inner">
+      <a href="index.html" class="auth-logo">NexMart <span>Premium Supermarket</span></a>
+      <h2>Shop Smarter,<br/>Live <em>Better.</em></h2>
+      <p>Join 10,000+ happy customers who trust NexMart for their daily groceries — fresh, fast and affordable.</p>
+      <div class="auth-perks">
+        <div class="auth-perk"><div class="auth-perk-icon"><i class="fa fa-truck"></i></div><span>Free 2-hour delivery on all orders above ₹499</span></div>
+        <div class="auth-perk"><div class="auth-perk-icon"><i class="fa fa-tag"></i></div><span>Exclusive member discounts up to 30% off</span></div>
+        <div class="auth-perk"><div class="auth-perk-icon"><i class="fa fa-leaf"></i></div><span>Certified organic & farm-fresh products</span></div>
+        <div class="auth-perk"><div class="auth-perk-icon"><i class="fa fa-undo"></i></div><span>Hassle-free returns within 24 hours</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-right">
+    <div class="auth-card">
+      <h2 style="font-family:var(--font-head);font-size:1.9rem;margin-bottom:.4rem">Welcome Back</h2>
+      <p style="color:var(--text-lt);font-size:.875rem;margin-bottom:1.75rem">Sign in to your account or create a new one</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- DEMO NOTE -->
+      <div class="role-note">
+        <strong>Demo credentials:</strong><br/>
+        Customer — <code>user@nexmart.com</code> / <code>password123</code><br/>
+        Admin &nbsp;&nbsp;— <code>admin@nexmart.com</code> / <code>admin123</code>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div class="auth-form active" id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-icon-wrap">
+            <i class="fa fa-envelope fi-icon"></i>
+            <input type="email" class="form-control" id="loginEmail" placeholder="you@example.com" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-icon-wrap">
+            <i class="fa fa-lock fi-icon"></i>
+            <input type="password" class="form-control" id="loginPw" placeholder="Enter your password" />
+            <button class="pw-toggle" onclick="togglePw('loginPw',this)"><i class="fa fa-eye"></i></button>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem">
+          <label class="form-check"><input type="checkbox"/> Remember me</label>
+          <a href="#" style="font-size:.82rem;color:var(--navy);font-weight:600">Forgot password?</a>
+        </div>
+        <button class="btn btn-navy btn-lg btn-full" onclick="doLogin()">
+          <i class="fa fa-sign-in-alt"></i> Sign In
+        </button>
+        <div class="form-divider">or continue with</div>
+        <button class="social-btn"><span>G</span> Continue with Google</button>
+        <button class="social-btn"><i class="fab fa-facebook" style="color:#1877f2"></i> Continue with Facebook</button>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div class="auth-form" id="registerForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <div class="input-icon-wrap">
+              <i class="fa fa-user fi-icon"></i>
+              <input type="text" class="form-control" id="regFirst" placeholder="First" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="regLast" placeholder="Last" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-icon-wrap">
+            <i class="fa fa-envelope fi-icon"></i>
+            <input type="email" class="form-control" id="regEmail" placeholder="you@example.com" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <div class="input-icon-wrap">
+            <i class="fa fa-phone fi-icon"></i>
+            <input type="tel" class="form-control" id="regPhone" placeholder="+91 98765 43210" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-icon-wrap">
+            <i class="fa fa-lock fi-icon"></i>
+            <input type="password" class="form-control" id="regPw" placeholder="Min. 8 characters" />
+            <button class="pw-toggle" onclick="togglePw('regPw',this)"><i class="fa fa-eye"></i></button>
+          </div>
+        </div>
+        <label class="form-check" style="margin-bottom:1.1rem"><input type="checkbox" id="agreeTerms"/> I agree to the <a href="#" style="color:var(--navy)">Terms</a> & <a href="#" style="color:var(--navy)">Privacy Policy</a></label>
+        <button class="btn btn-navy btn-lg btn-full" onclick="doRegister()"><i class="fa fa-user-plus"></i> Create Account</button>
+      </div>
+
+      <p class="auth-footer-note">By continuing, you agree to NexMart's <a href="#">Terms of Service</a></p>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+    document.getElementById('loginForm').classList.toggle('active', tab==='login');
+    document.getElementById('registerForm').classList.toggle('active', tab==='register');
+  }
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.innerHTML = `<i class="fa fa-eye${show?'-slash':''}"></i>`;
+  }
+  function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pw    = document.getElementById('loginPw').value;
+    if (!email || !pw) { toast('Please fill in all fields', 'error'); return; }
+    if (email === 'admin@nexmart.com' && pw === 'admin123') {
+      Store.saveUser({ name:'Admin User', email, role:'admin' });
+      toast('✓ Welcome back, Admin!');
+      setTimeout(() => location.href='admin.html', 900);
+    } else if (email === 'user@nexmart.com' && pw === 'password123') {
+      Store.saveUser({ name:'Priya Sharma', email, role:'customer' });
+      toast('✓ Welcome back, Priya!');
+      setTimeout(() => location.href='index.html', 900);
+    } else {
+      toast('Invalid credentials. Try the demo accounts above.', 'error');
+    }
+  }
+  function doRegister() {
+    const first = document.getElementById('regFirst').value.trim();
+    const last  = document.getElementById('regLast').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const pw    = document.getElementById('regPw').value;
+    const agree = document.getElementById('agreeTerms').checked;
+    if (!first||!last||!email||!pw) { toast('Please fill in all fields', 'error'); return; }
+    if (!agree) { toast('Please accept the Terms & Privacy Policy', 'error'); return; }
+    if (pw.length < 8) { toast('Password must be at least 8 characters', 'error'); return; }
+    Store.saveUser({ name:`${first} ${last}`, email, role:'customer' });
+    toast(`✓ Account created! Welcome, ${first}!`);
+    setTimeout(() => location.href='index.html', 900);
+  }
+</script>
+</body>
+</html>
