@@ -7,75 +7,72 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     body { display:flex; min-height:100vh; background:var(--bg); }
-    .admin-sidebar {
-      width:240px; min-height:100vh; background:var(--navy); flex-shrink:0;
-      display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;
-    }
+
+    /* ── Sidebar ── */
+    .admin-sidebar { width:240px; min-height:100vh; background:var(--navy); flex-shrink:0; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
     .sidebar-logo { padding:1.5rem 1.25rem; border-bottom:1px solid rgba(255,255,255,.08); }
     .sidebar-logo .logo-main { color:#fff; font-family:var(--font-head); font-size:1.4rem; display:block; }
     .sidebar-logo .logo-sub  { color:var(--gold-light); font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; }
     .sidebar-user { padding:1rem 1.25rem; border-bottom:1px solid rgba(255,255,255,.08); display:flex; align-items:center; gap:.75rem; }
-    .sidebar-avatar { width:36px; height:36px; background:var(--gold); border-radius:50%; display:grid; place-items:center; font-size:.8rem; font-weight:700; color:var(--navy); flex-shrink:0; }
+    .sidebar-avatar { width:38px; height:38px; background:var(--gold); border-radius:50%; display:grid; place-items:center; font-size:.8rem; font-weight:700; color:var(--navy); flex-shrink:0; }
     .sidebar-user-info strong { display:block; font-size:.82rem; color:#fff; }
     .sidebar-user-info span { font-size:.72rem; color:var(--gold-light); }
     .sidebar-nav { padding:.75rem 0; flex:1; }
     .sidebar-section { padding:.3rem 1.25rem .2rem; font-size:.65rem; font-weight:700; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:.12em; margin-top:.5rem; }
-    .sidebar-link { display:flex; align-items:center; gap:.75rem; padding:.65rem 1.25rem; font-size:.84rem; color:rgba(255,255,255,.65); transition:all var(--t); cursor:pointer; border-left:3px solid transparent; }
+    .sidebar-link { display:flex; align-items:center; gap:.75rem; padding:.65rem 1.25rem; font-size:.84rem; color:rgba(255,255,255,.65); cursor:pointer; border-left:3px solid transparent; transition:all var(--t); }
     .sidebar-link i { width:18px; text-align:center; flex-shrink:0; }
-    .sidebar-link:hover { background:rgba(255,255,255,.07); color:#fff; border-left-color:rgba(255,255,255,.2); }
+    .sidebar-link:hover { background:rgba(255,255,255,.07); color:#fff; }
     .sidebar-link.active { background:rgba(201,168,76,.12); color:var(--gold-light); border-left-color:var(--gold); }
-    .sidebar-link .badge { margin-left:auto; }
     .sidebar-foot { padding:1rem 1.25rem; border-top:1px solid rgba(255,255,255,.08); }
-    .admin-main { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+
+    /* ── Main ── */
+    .admin-main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
     .admin-topbar { background:var(--white); border-bottom:1px solid var(--border); padding:.9rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; box-shadow:var(--shadow-sm); }
     .at-title { font-family:var(--font-head); font-size:1.15rem; font-weight:700; }
-    .at-right { display:flex; align-items:center; gap:1rem; }
-    .at-date { font-size:.78rem; color:var(--text-lt); }
     .admin-content { padding:2rem; flex:1; overflow-y:auto; }
-    /* Page panels */
     .admin-page { display:none; }
     .admin-page.active { display:block; animation:fadeIn .3s; }
-    /* KPI Cards */
+
+    /* ── KPI ── */
     .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; margin-bottom:2rem; }
     .kpi-card { background:var(--white); border-radius:var(--radius); border:1px solid var(--border); padding:1.5rem; display:flex; gap:1rem; align-items:center; }
     .kpi-icon { width:52px; height:52px; border-radius:var(--radius-sm); display:grid; place-items:center; font-size:1.3rem; flex-shrink:0; }
-    .kpi-icon.blue   { background:#e8f0fe; color:#1a73e8; }
-    .kpi-icon.green  { background:var(--bg2); color:var(--success); }
-    .kpi-icon.gold   { background:#fdf3d7; color:#946c00; }
-    .kpi-icon.red    { background:#fdecea; color:var(--danger); }
+    .kpi-icon.blue  { background:#e8f0fe; color:#1a73e8; }
+    .kpi-icon.green { background:#e6f6ef; color:var(--success); }
+    .kpi-icon.gold  { background:#fdf3d7; color:#946c00; }
+    .kpi-icon.red   { background:#fdecea; color:var(--danger); }
     .kpi-info strong { display:block; font-family:var(--font-head); font-size:1.8rem; line-height:1.1; }
     .kpi-info span   { font-size:.78rem; color:var(--text-lt); }
     .kpi-trend { margin-top:.3rem; font-size:.75rem; }
-    .kpi-trend.up { color:var(--success); }
+    .kpi-trend.up   { color:var(--success); }
     .kpi-trend.down { color:var(--danger); }
-    /* Charts placeholder */
+
+    /* ── Charts ── */
     .charts-grid { display:grid; grid-template-columns:1.5fr 1fr; gap:1.25rem; margin-bottom:2rem; }
     .chart-box { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; }
     .chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; }
     .chart-title { font-family:var(--font-head); font-size:1rem; font-weight:700; }
-    .mini-chart { height:180px; display:flex; align-items:flex-end; gap:8px; padding-top:.5rem; }
-    .bar { flex:1; background:var(--navy); border-radius:4px 4px 0 0; position:relative; transition:opacity var(--t); cursor:pointer; }
-    .bar:hover { opacity:.8; }
-    .bar span { position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); font-size:.65rem; color:var(--text-lt); white-space:nowrap; }
+    .mini-chart { height:180px; display:flex; align-items:flex-end; gap:8px; }
+    .bar { flex:1; border-radius:4px 4px 0 0; cursor:pointer; transition:opacity var(--t); }
+    .bar:hover { opacity:.75; }
     .donut-wrap { display:flex; align-items:center; justify-content:center; gap:2rem; }
-    .donut-svg { width:130px; height:130px; }
     .donut-legend { display:flex; flex-direction:column; gap:.5rem; }
     .dl-item { display:flex; align-items:center; gap:.5rem; font-size:.78rem; }
     .dl-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-    /* Product manager */
-    .pm-toolbar { display:flex; gap:1rem; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; }
+
+    /* ── Product toolbar ── */
+    .pm-toolbar { display:flex; gap:.75rem; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; }
     .pm-toolbar input { flex:1; min-width:200px; padding:.55rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font-body); font-size:.875rem; outline:none; }
     .pm-toolbar input:focus { border-color:var(--navy); }
-    .stock-low  { color:var(--danger); font-weight:600; }
-    .stock-ok   { color:var(--success); font-weight:600; }
-    .stock-med  { color:var(--warning); font-weight:600; }
-    /* Orders */
+
+    /* ── Order/status ── */
     .order-status { padding:.25rem .75rem; border-radius:99px; font-size:.72rem; font-weight:700; }
     .os-delivered { background:#e6f6ef; color:var(--success); }
     .os-pending   { background:#fef3e2; color:var(--warning); }
     .os-cancelled { background:#fdecea; color:var(--danger); }
     .os-transit   { background:var(--navy-pale); color:var(--navy); }
-    /* Analytics */
+
+    /* ── Analytics ── */
     .analytics-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; margin-bottom:1.5rem; }
     .an-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; }
     .an-card h4 { font-family:var(--font-head); font-size:.95rem; margin-bottom:.75rem; color:var(--text-md); }
@@ -83,6 +80,34 @@
     .progress-label { display:flex; justify-content:space-between; font-size:.78rem; color:var(--text-md); margin-bottom:.3rem; }
     .progress-bar { height:7px; background:var(--bg2); border-radius:99px; overflow:hidden; }
     .progress-fill { height:100%; border-radius:99px; background:var(--navy); transition:width 1s ease; }
+
+    /* ── MODAL ── */
+    .modal-overlay { position:fixed; inset:0; background:rgba(10,37,64,.55); z-index:500; display:none; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
+    .modal-overlay.show { display:flex; }
+    .modal-box { background:var(--white); border-radius:var(--radius); width:100%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-lg); animation:fadeUp .3s; }
+    .modal-head { padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--navy); color:#fff; border-radius:var(--radius) var(--radius) 0 0; }
+    .modal-head h3 { font-family:var(--font-head); font-size:1.15rem; }
+    .modal-close { background:rgba(255,255,255,.1); border:none; color:#fff; width:32px; height:32px; border-radius:var(--radius-sm); display:grid; place-items:center; cursor:pointer; font-size:1rem; transition:background var(--t); }
+    .modal-close:hover { background:rgba(255,255,255,.2); }
+    .modal-body { padding:1.5rem; }
+    .modal-footer { padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:.75rem; background:var(--bg); border-radius:0 0 var(--radius) var(--radius); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .emoji-preview { font-size:3rem; text-align:center; padding:.5rem; background:var(--bg); border-radius:var(--radius-sm); margin-bottom:.5rem; min-height:70px; display:flex; align-items:center; justify-content:center; }
+
+    /* ── Confirm modal ── */
+    .confirm-modal { position:fixed; inset:0; background:rgba(10,37,64,.55); z-index:600; display:none; align-items:center; justify-content:center; }
+    .confirm-modal.show { display:flex; }
+    .confirm-box { background:var(--white); border-radius:var(--radius); padding:2rem; max-width:380px; width:90%; text-align:center; box-shadow:var(--shadow-lg); animation:fadeUp .25s; }
+    .confirm-box .ci { font-size:3rem; margin-bottom:.75rem; }
+    .confirm-box h3 { font-family:var(--font-head); font-size:1.3rem; margin-bottom:.5rem; }
+    .confirm-box p { color:var(--text-lt); font-size:.875rem; margin-bottom:1.5rem; }
+    .confirm-btns { display:flex; gap:.75rem; justify-content:center; }
+
+    /* ── Stock badges ── */
+    .stock-low { color:var(--danger); font-weight:700; }
+    .stock-med { color:var(--warning); font-weight:700; }
+    .stock-ok  { color:var(--success); font-weight:700; }
+
     @media(max-width:1100px){ .kpi-grid{grid-template-columns:repeat(2,1fr)} .charts-grid{grid-template-columns:1fr} .analytics-grid{grid-template-columns:1fr 1fr} }
     @media(max-width:768px){ .admin-sidebar{display:none} .kpi-grid{grid-template-columns:1fr 1fr} }
   </style>
@@ -90,10 +115,7 @@
 <body>
 <script src="app.js"></script>
 <script>
-  // Auth guard
-  if (!Store.user || Store.user.role !== 'admin') {
-    location.href = 'login.html';
-  }
+  if (!Store.user || Store.user.role !== 'admin') location.href = 'login.html';
 </script>
 
 <!-- SIDEBAR -->
@@ -112,7 +134,7 @@
   <nav class="sidebar-nav">
     <div class="sidebar-section">Main</div>
     <div class="sidebar-link active" onclick="showPage('dashboard',this)"><i class="fa fa-th-large"></i> Dashboard</div>
-    <div class="sidebar-link" onclick="showPage('orders',this)"><i class="fa fa-box"></i> Orders <span class="badge badge-danger">12</span></div>
+    <div class="sidebar-link" onclick="showPage('orders',this)"><i class="fa fa-box"></i> Orders <span class="badge badge-danger" id="pendingBadge">0</span></div>
     <div class="sidebar-section">Catalogue</div>
     <div class="sidebar-link" onclick="showPage('products',this)"><i class="fa fa-tags"></i> Products</div>
     <div class="sidebar-link" onclick="showPage('inventory',this)"><i class="fa fa-warehouse"></i> Inventory</div>
@@ -130,9 +152,9 @@
 <div class="admin-main">
   <div class="admin-topbar">
     <span class="at-title" id="pageTitle">Dashboard</span>
-    <div class="at-right">
-      <span class="at-date" id="todayDate"></span>
-      <button class="btn btn-navy btn-sm"><i class="fa fa-bell"></i></button>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <span style="font-size:.78rem;color:var(--text-lt)" id="todayDate"></span>
+      <button class="btn btn-navy btn-sm" onclick="showPage('products',document.querySelector('[onclick*=products]'))"><i class="fa fa-plus"></i> Add Product</button>
     </div>
   </div>
 
@@ -140,40 +162,19 @@
 
     <!-- ── DASHBOARD ── -->
     <div class="admin-page active" id="page-dashboard">
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-icon blue"><i class="fa fa-shopping-cart"></i></div>
-          <div class="kpi-info"><strong>1,248</strong><span>Total Orders</span><div class="kpi-trend up">▲ 12.5% vs last month</div></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon green"><i class="fa fa-rupee-sign"></i></div>
-          <div class="kpi-info"><strong>₹3.84L</strong><span>Monthly Revenue</span><div class="kpi-trend up">▲ 8.3% vs last month</div></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon gold"><i class="fa fa-users"></i></div>
-          <div class="kpi-info"><strong>10,492</strong><span>Total Customers</span><div class="kpi-trend up">▲ 5.1% vs last month</div></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon red"><i class="fa fa-exclamation-triangle"></i></div>
-          <div class="kpi-info"><strong>7</strong><span>Low Stock Items</span><div class="kpi-trend down">▼ Needs attention</div></div>
-        </div>
-      </div>
-
+      <div class="kpi-grid" id="kpiGrid"></div>
       <div class="charts-grid">
         <div class="chart-box">
-          <div class="chart-header">
-            <span class="chart-title">Weekly Sales Revenue</span>
-            <span class="badge badge-navy">This Week</span>
-          </div>
+          <div class="chart-header"><span class="chart-title">Weekly Sales Revenue</span><span class="badge badge-navy">This Week</span></div>
           <div class="mini-chart" id="salesChart"></div>
-          <div style="display:flex;justify-content:center;gap:1.5rem;margin-top:1.5rem;font-size:.75rem;color:var(--text-lt)">
+          <div style="display:flex;justify-content:space-around;margin-top:.75rem;font-size:.72rem;color:var(--text-lt)">
             <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
           </div>
         </div>
         <div class="chart-box">
           <div class="chart-header"><span class="chart-title">Sales by Category</span></div>
           <div class="donut-wrap">
-            <svg class="donut-svg" viewBox="0 0 42 42">
+            <svg width="130" height="130" viewBox="0 0 42 42">
               <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e8eef5" stroke-width="6"/>
               <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#0a2540" stroke-width="6" stroke-dasharray="28 72" stroke-dashoffset="25"/>
               <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#c9a84c" stroke-width="6" stroke-dasharray="22 78" stroke-dashoffset="-3"/>
@@ -191,107 +192,61 @@
           </div>
         </div>
       </div>
-
-      <!-- Recent Orders -->
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">Recent Orders</span>
-          <button class="btn btn-ghost btn-sm" onclick="showPage('orders',document.querySelector('[onclick*=orders]'))">View All</button>
-        </div>
-        <div class="card-body" style="padding:0">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>#Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
-              <tbody id="recentOrders"></tbody>
-            </table>
-          </div>
-        </div>
+        <div class="card-header"><span class="card-title">Recent Orders</span><button class="btn btn-ghost btn-sm" onclick="showPage('orders',document.querySelector('[onclick*=orders]'))">View All</button></div>
+        <div class="card-body" style="padding:0"><div class="table-wrap"><table><thead><tr><th>#Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Status</th></tr></thead><tbody id="recentOrdersBody"></tbody></table></div></div>
       </div>
     </div>
 
     <!-- ── ORDERS ── -->
     <div class="admin-page" id="page-orders">
       <div class="card" style="margin-bottom:1.25rem">
-        <div class="card-body" style="display:flex;gap:1rem;flex-wrap:wrap;padding:1rem 1.5rem">
-          <div class="kpi-card" style="flex:1;min-width:160px;border:none;padding:.75rem;box-shadow:none;background:var(--bg)">
-            <div class="kpi-icon blue" style="width:38px;height:38px;font-size:1rem"><i class="fa fa-clock"></i></div>
-            <div class="kpi-info"><strong style="font-size:1.4rem">32</strong><span>Pending</span></div>
-          </div>
-          <div class="kpi-card" style="flex:1;min-width:160px;border:none;padding:.75rem;box-shadow:none;background:var(--bg)">
-            <div class="kpi-icon gold" style="width:38px;height:38px;font-size:1rem"><i class="fa fa-truck"></i></div>
-            <div class="kpi-info"><strong style="font-size:1.4rem">18</strong><span>In Transit</span></div>
-          </div>
-          <div class="kpi-card" style="flex:1;min-width:160px;border:none;padding:.75rem;box-shadow:none;background:var(--bg)">
-            <div class="kpi-icon green" style="width:38px;height:38px;font-size:1rem"><i class="fa fa-check"></i></div>
-            <div class="kpi-info"><strong style="font-size:1.4rem">1,182</strong><span>Delivered</span></div>
-          </div>
-          <div class="kpi-card" style="flex:1;min-width:160px;border:none;padding:.75rem;box-shadow:none;background:var(--bg)">
-            <div class="kpi-icon red" style="width:38px;height:38px;font-size:1rem"><i class="fa fa-times"></i></div>
-            <div class="kpi-info"><strong style="font-size:1.4rem">16</strong><span>Cancelled</span></div>
-          </div>
-        </div>
+        <div class="card-body" style="display:flex;gap:1rem;flex-wrap:wrap;padding:1rem 1.5rem" id="orderStats"></div>
       </div>
       <div class="card">
         <div class="card-header">
           <span class="card-title">All Orders</span>
-          <div style="display:flex;gap:.5rem">
-            <select class="sort-select" id="orderFilter" onchange="renderOrders()">
-              <option value="">All Status</option>
-              <option value="Delivered">Delivered</option>
-              <option value="Pending">Pending</option>
-              <option value="In Transit">In Transit</option>
-              <option value="Cancelled">Cancelled</option>
-            </select>
-          </div>
+          <select class="sort-select" id="orderFilter" onchange="renderOrders()">
+            <option value="">All Status</option>
+            <option>Delivered</option><option>Pending</option><option>In Transit</option><option>Cancelled</option>
+          </select>
         </div>
-        <div class="card-body" style="padding:0">
-          <div class="table-wrap"><table><thead><tr><th>#Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead><tbody id="ordersBody"></tbody></table></div>
-        </div>
+        <div class="card-body" style="padding:0"><div class="table-wrap"><table><thead><tr><th>#Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead><tbody id="ordersBody"></tbody></table></div></div>
       </div>
     </div>
 
     <!-- ── PRODUCTS ── -->
     <div class="admin-page" id="page-products">
       <div class="pm-toolbar">
-        <input type="text" id="productSearch" placeholder="🔍 Search products by name or category..." oninput="renderProductsAdmin()" />
+        <input type="text" id="productSearch" placeholder="🔍 Search products..." oninput="renderProductsAdmin()"/>
         <select class="sort-select" id="catFilter" onchange="renderProductsAdmin()">
           <option value="">All Categories</option>
           <option>Vegetables</option><option>Fruits</option><option>Dairy</option>
           <option>Bakery</option><option>Beverages</option><option>Snacks</option><option>Grains</option>
         </select>
-        <button class="btn btn-navy btn-sm" onclick="toast('Add product form would open here')"><i class="fa fa-plus"></i> Add Product</button>
+        <button class="btn btn-navy btn-sm" onclick="openProductModal()"><i class="fa fa-plus"></i> Add Product</button>
+        <button class="btn btn-ghost btn-sm" onclick="if(confirm('Reset all products to default?')){localStorage.removeItem(\'nm_products\');renderProductsAdmin();renderKPIs();toast(\'Products reset to default\');}"><i class="fa fa-undo"></i> Reset</button>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">Product Catalogue</span><span class="badge badge-navy" id="prodCount"></span></div>
-        <div class="card-body" style="padding:0">
-          <div class="table-wrap"><table><thead><tr><th>Emoji</th><th>Name</th><th>Category</th><th>Price</th><th>Old Price</th><th>Rating</th><th>Reviews</th><th>Badge</th><th>Actions</th></tr></thead><tbody id="productsAdminBody"></tbody></table></div>
-        </div>
+        <div class="card-body" style="padding:0"><div class="table-wrap"><table><thead><tr><th>Emoji</th><th>Name</th><th>Category</th><th>Price</th><th>M.R.P</th><th>Stock</th><th>Badge</th><th>Rating</th><th>Actions</th></tr></thead><tbody id="productsAdminBody"></tbody></table></div></div>
       </div>
     </div>
 
     <!-- ── INVENTORY ── -->
     <div class="admin-page" id="page-inventory">
       <div class="card">
-        <div class="card-header"><span class="card-title">Inventory Status</span><button class="btn btn-navy btn-sm" onclick="toast('Export CSV — feature available in production')"><i class="fa fa-download"></i> Export</button></div>
-        <div class="card-body" style="padding:0">
-          <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>SKU</th><th>In Stock</th><th>Reorder Level</th><th>Status</th><th>Last Updated</th></tr></thead><tbody id="inventoryBody"></tbody></table></div>
-        </div>
+        <div class="card-header"><span class="card-title">Inventory Status</span><button class="btn btn-navy btn-sm" onclick="toast('CSV export available in production')"><i class="fa fa-download"></i> Export</button></div>
+        <div class="card-body" style="padding:0"><div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>SKU</th><th>Stock</th><th>Reorder Level</th><th>Status</th><th>Action</th></tr></thead><tbody id="inventoryBody"></tbody></table></div></div>
       </div>
     </div>
 
     <!-- ── ANALYTICS ── -->
     <div class="admin-page" id="page-analytics">
       <div class="analytics-grid">
-        <div class="an-card">
-          <h4>Top Selling Products</h4>
-          <div id="topSellers"></div>
-        </div>
-        <div class="an-card">
-          <h4>Category Performance</h4>
-          <div id="catPerf"></div>
-        </div>
-        <div class="an-card">
-          <h4>Customer Metrics</h4>
+        <div class="an-card"><h4>Top Selling Products</h4><div id="topSellers"></div></div>
+        <div class="an-card"><h4>Category Performance</h4><div id="catPerf"></div></div>
+        <div class="an-card"><h4>Customer Metrics</h4>
           <div style="display:flex;flex-direction:column;gap:.85rem">
             <div><div style="font-size:.78rem;color:var(--text-lt)">Avg Order Value</div><div style="font-family:var(--font-head);font-size:1.6rem;font-weight:700">₹487</div></div>
             <div><div style="font-size:.78rem;color:var(--text-lt)">Repeat Purchase Rate</div><div style="font-family:var(--font-head);font-size:1.6rem;font-weight:700">68.4%</div></div>
@@ -301,16 +256,411 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-header"><span class="card-title">Monthly Revenue Trend (₹)</span></div>
-        <div class="card-body">
-          <div style="display:flex;align-items:flex-end;gap:12px;height:200px" id="revenueChart"></div>
-        </div>
+        <div class="card-header"><span class="card-title">Monthly Revenue (₹)</span></div>
+        <div class="card-body"><div style="display:flex;align-items:flex-end;gap:10px;height:200px" id="revenueChart"></div></div>
       </div>
     </div>
 
     <!-- ── CUSTOMERS ── -->
     <div class="admin-page" id="page-customers">
       <div class="card">
-        <div class="card-header"><span class="card-title">Customer Database</span><button class="btn btn-ghost btn-sm" onclick="toast('Export CSV')"><i class="fa fa-download"></i> Export</button></div>
-        <div class="card-body" style="padding:0">
-          <div
+        <div class="card-header"><span class="card-title">Customer Database</span></div>
+        <div class="card-body" style="padding:0"><div class="table-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Orders</th><th>Total Spent</th><th>Status</th></tr></thead><tbody id="customersBody"></tbody></table></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── ADD / EDIT PRODUCT MODAL ── -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">Add New Product</h3>
+      <button class="modal-close" onclick="closeProductModal()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId"/>
+      <div class="emoji-preview" id="emojiPreview">🛒</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Product Name *</label>
+          <input type="text" class="form-control" id="pName" placeholder="e.g. Fresh Broccoli"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Emoji *</label>
+          <input type="text" class="form-control" id="pEmoji" placeholder="e.g. 🥦" maxlength="4" oninput="document.getElementById('emojiPreview').textContent=this.value||'🛒'"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select class="form-control" id="pCat">
+            <option value="">Select category</option>
+            <option>Vegetables</option><option>Fruits</option><option>Dairy</option>
+            <option>Bakery</option><option>Beverages</option><option>Snacks</option><option>Grains</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Weight / Unit *</label>
+          <input type="text" class="form-control" id="pWeight" placeholder="e.g. 500g, 1 kg, 6 pcs"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Selling Price (₹) *</label>
+          <input type="number" class="form-control" id="pPrice" placeholder="e.g. 99" min="1"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">M.R.P (₹) — optional</label>
+          <input type="number" class="form-control" id="pOldPrice" placeholder="e.g. 129" min="1"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Stock Quantity *</label>
+          <input type="number" class="form-control" id="pStock" placeholder="e.g. 50" min="0"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Badge — optional</label>
+          <select class="form-control" id="pBadge">
+            <option value="">No badge</option>
+            <option>Sale</option><option>Organic</option><option>Fresh</option>
+            <option>Premium</option><option>Artisan</option><option>Natural</option>
+          </select>
+        </div>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:.8rem;color:var(--text-md)">
+        <i class="fa fa-info-circle" style="color:var(--gold)"></i>
+        Product will appear on the storefront immediately after saving.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeProductModal()">Cancel</button>
+      <button class="btn btn-navy" onclick="saveProduct()"><i class="fa fa-save"></i> Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONFIRM DELETE MODAL ── -->
+<div class="confirm-modal" id="confirmModal">
+  <div class="confirm-box">
+    <div class="ci">🗑️</div>
+    <h3>Delete Product?</h3>
+    <p id="confirmMsg">This action cannot be undone.</p>
+    <div class="confirm-btns">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // ── Page switch ──
+  function showPage(name, el) {
+    document.querySelectorAll('.admin-page').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.sidebar-link').forEach(function(l){ l.classList.remove('active'); });
+    document.getElementById('page-' + name).classList.add('active');
+    if (el) el.classList.add('active');
+    var titles = {dashboard:'Dashboard',orders:'Orders',products:'Product Catalogue',inventory:'Inventory',analytics:'Analytics',customers:'Customers'};
+    document.getElementById('pageTitle').textContent = titles[name] || name;
+    if (name === 'products')   renderProductsAdmin();
+    if (name === 'orders')     renderOrders();
+    if (name === 'inventory')  renderInventory();
+    if (name === 'analytics')  renderAnalytics();
+    if (name === 'customers')  renderCustomers();
+  }
+
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  // ── KPIs ──
+  function renderKPIs() {
+    var prods = getProducts();
+    var orders = getOrders();
+    var lowStock = prods.filter(function(p){ return (p.stock||0) <= 10; }).length;
+    var revenue = orders.reduce(function(s,o){ return s + (o.total||0); }, 0);
+    var kpis = [
+      { icon:'fa-shopping-cart', cls:'blue',  label:'Total Orders',    value: orders.length || 248 },
+      { icon:'fa-rupee-sign',    cls:'green', label:'Total Revenue',   value: revenue > 0 ? fmt(revenue) : '₹3.84L' },
+      { icon:'fa-tags',          cls:'gold',  label:'Total Products',  value: prods.length },
+      { icon:'fa-exclamation-triangle', cls:'red', label:'Low Stock Items', value: lowStock },
+    ];
+    document.getElementById('kpiGrid').innerHTML = kpis.map(function(k){
+      return '<div class="kpi-card"><div class="kpi-icon ' + k.cls + '"><i class="fa ' + k.icon + '"></i></div>'
+        + '<div class="kpi-info"><strong>' + k.value + '</strong><span>' + k.label + '</span></div></div>';
+    }).join('');
+    document.getElementById('pendingBadge').textContent = getOrders().filter(function(o){ return o.status==='Pending'; }).length || 12;
+  }
+
+  // ── Sales Chart ──
+  var salesData = [42000,38000,51000,67000,59000,82000,74000];
+  var sMax = Math.max.apply(null, salesData);
+  document.getElementById('salesChart').innerHTML = salesData.map(function(v,i){
+    return '<div class="bar" style="flex:1;height:' + Math.round(v/sMax*100) + '%;background:' + (i===5?'var(--gold)':'var(--navy)') + ';opacity:' + (i===5?1:.75) + '"></div>';
+  }).join('');
+
+  // ── Recent orders ──
+  function renderRecentOrders() {
+    var orders = getOrders();
+    var mock = [
+      { id:'NM-200001', customer:'Priya Sharma',  items:3, total:487,  date:'Today',       status:'Delivered' },
+      { id:'NM-200002', customer:'Arjun Kumar',   items:5, total:832,  date:'Today',       status:'Pending'   },
+      { id:'NM-200003', customer:'Meena Rao',     items:2, total:215,  date:'Yesterday',   status:'In Transit'},
+      { id:'NM-200004', customer:'Rahul Tiwari',  items:7, total:1240, date:'2 days ago',  status:'Delivered' },
+      { id:'NM-200005', customer:'Sunita Patel',  items:1, total:99,   date:'3 days ago',  status:'Cancelled' },
+    ];
+    var combined = orders.slice(0,3).concat(mock).slice(0,6);
+    var sc = {Delivered:'os-delivered',Pending:'os-pending','In Transit':'os-transit',Cancelled:'os-cancelled'};
+    document.getElementById('recentOrdersBody').innerHTML = combined.map(function(o){
+      return '<tr><td><strong>' + o.id + '</strong></td><td>' + o.customer + '</td><td>' + o.items + ' items</td>'
+        + '<td><strong>' + fmt(o.total) + '</strong></td><td>' + o.date + '</td>'
+        + '<td><span class="order-status ' + (sc[o.status]||'os-pending') + '">' + o.status + '</span></td></tr>';
+    }).join('');
+  }
+
+  // ── All Orders ──
+  var MOCK_ORDERS = Array.from({length:20}, function(_,i){
+    return {
+      id: 'NM-' + (200010+i),
+      customer: ['Priya Sharma','Arjun Kumar','Meena Rao','Rahul Tiwari','Sunita Patel'][i%5],
+      items: Math.floor(Math.random()*8)+1,
+      total: Math.floor(Math.random()*1500)+199,
+      date: new Date(2025,5,i+1).toLocaleDateString('en-IN',{day:'numeric',month:'short'}),
+      payment: ['UPI','Card','COD','Wallet'][i%4],
+      status: ['Delivered','Pending','In Transit','Delivered','Cancelled'][i%5],
+    };
+  });
+
+  function renderOrders() {
+    var filter = document.getElementById('orderFilter').value;
+    var realOrders = getOrders();
+    var all = realOrders.concat(MOCK_ORDERS);
+    var list = filter ? all.filter(function(o){ return o.status===filter; }) : all;
+    var sc = {Delivered:'os-delivered',Pending:'os-pending','In Transit':'os-transit',Cancelled:'os-cancelled'};
+    var stats = {Pending:0,'In Transit':0,Delivered:0,Cancelled:0};
+    all.forEach(function(o){ if(stats[o.status]!==undefined) stats[o.status]++; });
+    var icons = {Pending:'fa-clock gold',  'In Transit':'fa-truck gold', Delivered:'fa-check green', Cancelled:'fa-times red'};
+    document.getElementById('orderStats').innerHTML = Object.keys(stats).map(function(k){
+      return '<div style="flex:1;min-width:140px;background:var(--bg);border-radius:var(--radius-sm);padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem">'
+        + '<i class="fa ' + (icons[k]||'fa-circle') + '" style="font-size:1.1rem"></i>'
+        + '<div><strong style="font-family:var(--font-head);font-size:1.4rem">' + stats[k] + '</strong>'
+        + '<div style="font-size:.75rem;color:var(--text-lt)">' + k + '</div></div></div>';
+    }).join('');
+    document.getElementById('ordersBody').innerHTML = list.map(function(o){
+      return '<tr><td><strong>' + o.id + '</strong></td><td>' + o.customer + '</td><td>' + o.items + ' items</td>'
+        + '<td><strong>' + fmt(o.total) + '</strong></td><td>' + o.date + '</td>'
+        + '<td><span class="badge badge-navy">' + (o.payment||'UPI') + '</span></td>'
+        + '<td><span class="order-status ' + (sc[o.status]||'os-pending') + '">' + o.status + '</span></td>'
+        + '<td><button class="btn btn-ghost btn-sm" onclick="toast(\'Viewing ' + o.id + '\')">View</button></td></tr>';
+    }).join('');
+  }
+
+  // ── Products Admin ──
+  function renderProductsAdmin() {
+    var q  = (document.getElementById('productSearch').value||'').toLowerCase();
+    var cf = document.getElementById('catFilter').value;
+    var list = getProducts();
+    if (q)  list = list.filter(function(p){ return p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q); });
+    if (cf) list = list.filter(function(p){ return p.cat === cf; });
+    document.getElementById('prodCount').textContent = list.length + ' products';
+    document.getElementById('productsAdminBody').innerHTML = list.map(function(p){
+      var stockCls = (p.stock||0) <= 5 ? 'stock-low' : (p.stock||0) <= 15 ? 'stock-med' : 'stock-ok';
+      return '<tr>'
+        + '<td style="font-size:1.5rem">' + p.emoji + '</td>'
+        + '<td><strong>' + p.name + '</strong></td>'
+        + '<td><span class="badge badge-navy">' + p.cat + '</span></td>'
+        + '<td><strong>' + fmt(p.price) + '</strong></td>'
+        + '<td>' + (p.oldPrice ? '<span style="color:var(--text-lt);text-decoration:line-through">' + fmt(p.oldPrice) + '</span>' : '—') + '</td>'
+        + '<td class="' + stockCls + '">' + (p.stock||0) + ' units</td>'
+        + '<td>' + (p.badge ? '<span class="badge badge-gold">' + p.badge + '</span>' : '—') + '</td>'
+        + '<td><span style="color:#f4a261">★</span> ' + p.rating + '</td>'
+        + '<td style="white-space:nowrap">'
+        + '<button class="btn btn-ghost btn-sm" onclick="openProductModal(' + p.id + ')" style="margin-right:.3rem"><i class="fa fa-edit"></i> Edit</button>'
+        + '<button class="btn btn-danger btn-sm" onclick="confirmDelete(' + p.id + ',\'' + p.name.replace(/'/g,"\\'") + '\')"><i class="fa fa-trash"></i></button>'
+        + '</td></tr>';
+    }).join('');
+  }
+
+  // ── Inventory ──
+  function renderInventory() {
+    document.getElementById('inventoryBody').innerHTML = getProducts().map(function(p){
+      var s = p.stock || 0, reorder = 10;
+      var cls   = s <= reorder*0.3 ? 'stock-low' : s <= reorder ? 'stock-med' : 'stock-ok';
+      var label = s <= reorder*0.3 ? 'Critical'  : s <= reorder ? 'Low'       : 'Sufficient';
+      var badgeCls = s < 5 ? 'badge-danger' : s <= reorder ? 'badge-warning' : 'badge-success';
+      var sku = 'NM-' + String(p.id).padStart(4,'0');
+      return '<tr>'
+        + '<td><strong>' + p.name + '</strong></td>'
+        + '<td><span class="badge badge-navy">' + p.cat + '</span></td>'
+        + '<td style="font-family:monospace;font-size:.8rem">' + sku + '</td>'
+        + '<td class="' + cls + '">' + s + ' units</td>'
+        + '<td>' + reorder + ' units</td>'
+        + '<td><span class="badge ' + badgeCls + '">' + label + '</span></td>'
+        + '<td><button class="btn btn-ghost btn-sm" onclick="promptStock(' + p.id + ',' + s + ')"><i class="fa fa-edit"></i> Update</button></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  window.promptStock = function(id, current) {
+    var val = prompt('Update stock quantity (current: ' + current + ' units):', current);
+    if (val === null) return;
+    var n = parseInt(val);
+    if (isNaN(n) || n < 0) { toast('Invalid quantity', 'error'); return; }
+    updateProduct(id, { stock: n });
+    renderInventory();
+    renderKPIs();
+    toast('Stock updated successfully');
+  };
+
+  // ── Analytics ──
+  function renderAnalytics() {
+    var prods = getProducts();
+    var top5 = prods.slice().sort(function(a,b){ return b.reviews - a.reviews; }).slice(0,5);
+    document.getElementById('topSellers').innerHTML = top5.map(function(p){
+      return '<div class="progress-item">'
+        + '<div class="progress-label"><span>' + p.emoji + ' ' + p.name + '</span><span>' + p.reviews + '</span></div>'
+        + '<div class="progress-bar"><div class="progress-fill" style="width:' + Math.round(p.reviews/top5[0].reviews*100) + '%"></div></div>'
+        + '</div>';
+    }).join('');
+    var cats = CATEGORIES.slice(1);
+    document.getElementById('catPerf').innerHTML = cats.map(function(c){
+      var pct = Math.floor(Math.random()*60)+20;
+      return '<div class="progress-item">'
+        + '<div class="progress-label"><span>' + c.icon + ' ' + c.name + '</span><span>' + pct + '%</span></div>'
+        + '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;background:var(--gold)"></div></div>'
+        + '</div>';
+    }).join('');
+    var revData = [180,220,190,280,310,265,340,290,380,420,395,450];
+    var revMax = Math.max.apply(null, revData);
+    document.getElementById('revenueChart').innerHTML = revData.map(function(v,i){
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.25rem">'
+        + '<div style="width:100%;background:' + (i===11?'var(--gold)':'var(--navy)') + ';border-radius:4px 4px 0 0;height:' + Math.round(v/revMax*180) + 'px;opacity:' + (i===11?1:.75) + '"></div>'
+        + '<div style="font-size:.65rem;color:var(--text-lt)">' + ['J','F','M','A','M','J','J','A','S','O','N','D'][i] + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // ── Customers ──
+  function renderCustomers() {
+    var orders = getOrders();
+    var map = {};
+    orders.forEach(function(o){
+      if (!map[o.userEmail]) map[o.userEmail] = { name: o.customer||'Customer', email: o.userEmail, orders: 0, spent: 0 };
+      map[o.userEmail].orders++;
+      map[o.userEmail].spent += o.total||0;
+    });
+    var list = Object.values(map);
+    if (list.length === 0) {
+      var mock = [
+        { name:'Priya Sharma', email:'user@nexmart.com', orders:8, spent:3240 },
+        { name:'Arjun Kumar',  email:'arjun@mail.com',  orders:3, spent:1100 },
+        { name:'Meena Rao',    email:'meena@mail.com',  orders:12,spent:5680 },
+      ];
+      list = mock;
+    }
+    document.getElementById('customersBody').innerHTML = list.map(function(c,i){
+      return '<tr><td>' + (i+1) + '</td><td><strong>' + c.name + '</strong></td><td>' + c.email + '</td>'
+        + '<td>' + c.orders + '</td><td><strong>' + fmt(c.spent) + '</strong></td>'
+        + '<td><span class="badge badge-success">Active</span></td></tr>';
+    }).join('');
+  }
+
+  // ── ADD / EDIT MODAL ──
+  var _editingId = null;
+
+  function openProductModal(id) {
+    _editingId = id || null;
+    var modal = document.getElementById('productModal');
+    document.getElementById('modalTitle').textContent = id ? 'Edit Product' : 'Add New Product';
+    // Clear form
+    ['pName','pEmoji','pWeight','pPrice','pOldPrice','pStock'].forEach(function(f){ document.getElementById(f).value = ''; });
+    document.getElementById('pCat').value = '';
+    document.getElementById('pBadge').value = '';
+    document.getElementById('emojiPreview').textContent = '🛒';
+    document.getElementById('editId').value = id || '';
+
+    if (id) {
+      var p = getProducts().find(function(x){ return x.id === id; });
+      if (p) {
+        document.getElementById('pName').value     = p.name;
+        document.getElementById('pEmoji').value    = p.emoji;
+        document.getElementById('pCat').value      = p.cat;
+        document.getElementById('pWeight').value   = p.weight;
+        document.getElementById('pPrice').value    = p.price;
+        document.getElementById('pOldPrice').value = p.oldPrice || '';
+        document.getElementById('pStock').value    = p.stock || 0;
+        document.getElementById('pBadge').value    = p.badge || '';
+        document.getElementById('emojiPreview').textContent = p.emoji;
+      }
+    }
+    modal.classList.add('show');
+  }
+
+  function closeProductModal() {
+    document.getElementById('productModal').classList.remove('show');
+    _editingId = null;
+  }
+
+  function saveProduct() {
+    var name     = document.getElementById('pName').value.trim();
+    var emoji    = document.getElementById('pEmoji').value.trim();
+    var cat      = document.getElementById('pCat').value;
+    var weight   = document.getElementById('pWeight').value.trim();
+    var price    = parseInt(document.getElementById('pPrice').value);
+    var oldPrice = parseInt(document.getElementById('pOldPrice').value) || null;
+    var stock    = parseInt(document.getElementById('pStock').value) || 0;
+    var badge    = document.getElementById('pBadge').value || null;
+
+    if (!name || !emoji || !cat || !weight || !price) {
+      toast('Please fill in all required fields', 'error'); return;
+    }
+    if (isNaN(price) || price < 1) { toast('Enter a valid price', 'error'); return; }
+
+    var data = { name:name, emoji:emoji, cat:cat, weight:weight, price:price, oldPrice:oldPrice, stock:stock, badge:badge };
+
+    if (_editingId) {
+      updateProduct(_editingId, data);
+      toast('✓ ' + name + ' updated successfully');
+    } else {
+      addProduct(data);
+      toast('✓ ' + name + ' added to catalogue');
+    }
+    closeProductModal();
+    renderProductsAdmin();
+    renderKPIs();
+  }
+
+  // ── DELETE CONFIRM ──
+  var _deleteId = null;
+
+  function confirmDelete(id, name) {
+    _deleteId = id;
+    document.getElementById('confirmMsg').textContent = 'Delete "' + name + '"? This cannot be undone.';
+    document.getElementById('confirmModal').classList.add('show');
+    document.getElementById('confirmOkBtn').onclick = function() {
+      deleteProduct(_deleteId);
+      closeConfirm();
+      renderProductsAdmin();
+      renderKPIs();
+      renderInventory();
+      toast(name + ' deleted', 'error');
+    };
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirmModal').classList.remove('show');
+    _deleteId = null;
+  }
+
+  // Close modals on overlay click
+  document.getElementById('productModal').addEventListener('click', function(e){ if(e.target===this) closeProductModal(); });
+  document.getElementById('confirmModal').addEventListener('click', function(e){ if(e.target===this) closeConfirm(); });
+
+  // ── INIT ──
+  renderKPIs();
+  renderRecentOrders();
+</script>
+</body>
+</html>
