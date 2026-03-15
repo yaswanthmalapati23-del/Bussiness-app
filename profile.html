@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>My Account — NexMart</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    .profile-layout { max-width:1200px; margin:0 auto; padding:2.5rem 2rem; display:grid; grid-template-columns:260px 1fr; gap:2rem; align-items:start; }
+
+    /* ── Sidebar ── */
+    .profile-sidebar { position:sticky; top:80px; }
+    .profile-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .profile-hero { background:linear-gradient(135deg, var(--navy), #1a4a73); padding:2rem 1.5rem; text-align:center; }
+    .profile-avatar { width:72px; height:72px; background:var(--gold); border-radius:50%; display:grid; place-items:center; font-family:var(--font-head); font-size:1.8rem; font-weight:700; color:var(--navy); margin:0 auto .75rem; border:3px solid rgba(255,255,255,.3); }
+    .profile-name { font-family:var(--font-head); font-size:1.2rem; color:#fff; }
+    .profile-email { font-size:.78rem; color:rgba(255,255,255,.65); margin-top:.2rem; }
+    .profile-badge { display:inline-flex; align-items:center; gap:.4rem; background:rgba(201,168,76,.2); color:var(--gold-light); border-radius:99px; padding:.2rem .75rem; font-size:.72rem; font-weight:600; margin-top:.6rem; }
+    .profile-nav { padding:.5rem 0; }
+    .profile-nav-link { display:flex; align-items:center; gap:.75rem; padding:.7rem 1.25rem; font-size:.875rem; color:var(--text-md); cursor:pointer; transition:all var(--t); border-left:3px solid transparent; }
+    .profile-nav-link i { width:18px; text-align:center; color:var(--text-lt); }
+    .profile-nav-link:hover { background:var(--bg); color:var(--navy); }
+    .profile-nav-link.active { background:var(--navy-pale); color:var(--navy); border-left-color:var(--navy); font-weight:600; }
+    .profile-nav-link.active i { color:var(--navy); }
+
+    /* ── Content ── */
+    .profile-content { }
+    .profile-page { display:none; }
+    .profile-page.active { display:block; animation:fadeIn .3s; }
+    .content-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:1.25rem; overflow:hidden; }
+    .content-head { padding:1.1rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .content-title { font-family:var(--font-head); font-size:1.1rem; font-weight:700; }
+    .content-body { padding:1.5rem; }
+
+    /* ── Stats ── */
+    .account-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .stat-box { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; text-align:center; }
+    .stat-box strong { display:block; font-family:var(--font-head); font-size:1.8rem; color:var(--navy); }
+    .stat-box span { font-size:.78rem; color:var(--text-lt); }
+
+    /* ── Orders ── */
+    .order-card { border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:.75rem; overflow:hidden; }
+    .order-card-head { padding:.9rem 1.25rem; background:var(--bg); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem; }
+    .order-id { font-weight:700; font-size:.875rem; }
+    .order-date { font-size:.78rem; color:var(--text-lt); }
+    .order-card-body { padding:1rem 1.25rem; }
+    .order-items-preview { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:.75rem; }
+    .oip-item { background:var(--bg); border-radius:var(--radius-sm); padding:.35rem .6rem; font-size:.78rem; display:flex; align-items:center; gap:.3rem; }
+    .order-meta { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem; }
+    .order-total { font-weight:700; color:var(--navy); font-family:var(--font-head); font-size:1.1rem; }
+    .os-delivered { background:#e6f6ef; color:var(--success); }
+    .os-pending   { background:#fef3e2; color:var(--warning); }
+    .os-cancelled { background:#fdecea; color:var(--danger); }
+    .os-transit   { background:var(--navy-pale); color:var(--navy); }
+    .order-status { padding:.25rem .75rem; border-radius:99px; font-size:.72rem; font-weight:700; }
+
+    /* ── Empty ── */
+    .empty-state { text-align:center; padding:3rem 1rem; color:var(--text-lt); }
+    .empty-state .es-icon { font-size:3.5rem; margin-bottom:1rem; }
+
+    /* ── Profile form ── */
+    .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .addr-card { border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.25rem; margin-bottom:.75rem; display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+    .addr-card.default { border-color:var(--navy); background:var(--navy-pale); }
+    .addr-info strong { display:block; margin-bottom:.3rem; font-size:.875rem; }
+    .addr-info p { font-size:.82rem; color:var(--text-md); line-height:1.6; }
+    .addr-actions { display:flex; gap:.4rem; flex-shrink:0; }
+
+    /* ── Wishlist grid ── */
+    .wish-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; }
+
+    @media(max-width:900px){ .profile-layout{grid-template-columns:1fr} .profile-sidebar{position:static} }
+    @media(max-width:480px){ .account-stats{grid-template-columns:1fr 1fr} .form-row-2{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<script src="app.js"></script>
+<script>
+  buildNav('profile');
+  buildCartDrawer();
+</script>
+
+<div class="page-hero" style="padding:2rem">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>My Account</span></div>
+    <h1>My Account</h1>
+    <p>Manage your profile, orders and preferences</p>
+  </div>
+</div>
+
+<div class="profile-layout">
+
+  <!-- SIDEBAR -->
+  <div class="profile-sidebar">
+    <div class="profile-card">
+      <div class="profile-hero">
+        <div class="profile-avatar" id="avatarInitials">U</div>
+        <div class="profile-name" id="profileName">Guest</div>
+        <div class="profile-email" id="profileEmail">—</div>
+        <div class="profile-badge"><i class="fa fa-star"></i> Premium Member</div>
+      </div>
+      <nav class="profile-nav">
+        <div class="profile-nav-link active" onclick="switchTab('overview',this)"><i class="fa fa-home"></i> Overview</div>
+        <div class="profile-nav-link" onclick="switchTab('orders',this)" id="ordersTab"><i class="fa fa-box"></i> My Orders</div>
+        <div class="profile-nav-link" onclick="switchTab('wishlist',this)" id="wishlistTab"><i class="fa fa-heart"></i> Wishlist</div>
+        <div class="profile-nav-link" onclick="switchTab('addresses',this)"><i class="fa fa-map-marker-alt"></i> Addresses</div>
+        <div class="profile-nav-link" onclick="switchTab('settings',this)"><i class="fa fa-cog"></i> Settings</div>
+        <hr style="margin:.5rem 1.25rem;border-color:var(--border)"/>
+        <div class="profile-nav-link" onclick="window.handleLogout()" style="color:var(--danger)"><i class="fa fa-sign-out-alt" style="color:var(--danger)"></i> Logout</div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="profile-content">
+
+    <!-- ── OVERVIEW ── -->
+    <div class="profile-page active" id="tab-overview">
+      <div class="account-stats" id="accountStats"></div>
+      <div class="content-card">
+        <div class="content-head"><span class="content-title">Recent Orders</span><button class="btn btn-ghost btn-sm" onclick="switchTab('orders',document.querySelector('[onclick*=orders]'))">View All</button></div>
+        <div class="content-body" id="recentOrdersList"></div>
+      </div>
+      <div class="content-card">
+        <div class="content-head"><span class="content-title">Wishlist Preview</span><button class="btn btn-ghost btn-sm" onclick="switchTab('wishlist',document.querySelector('[onclick*=wishlist]'))">View All</button></div>
+        <div class="content-body">
+          <div class="wish-grid" id="wishPreview"></div>
+          <div class="empty-state hidden" id="wishPreviewEmpty"><div class="es-icon">❤️</div><p>No items in wishlist yet</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ORDERS ── -->
+    <div class="profile-page" id="tab-orders">
+      <div class="content-card">
+        <div class="content-head">
+          <span class="content-title">Order History</span>
+          <select class="sort-select" id="orderStatusFilter" onchange="renderMyOrders()">
+            <option value="">All Orders</option>
+            <option>Delivered</option><option>Pending</option><option>In Transit</option><option>Cancelled</option>
+          </select>
+        </div>
+        <div class="content-body" id="myOrdersList"></div>
+      </div>
+    </div>
+
+    <!-- ── WISHLIST ── -->
+    <div class="profile-page" id="tab-wishlist">
+      <div class="content-card">
+        <div class="content-head"><span class="content-title">My Wishlist</span><span class="badge badge-navy" id="wishCount2"></span></div>
+        <div class="content-body">
+          <div class="wish-grid" id="wishGrid"></div>
+          <div class="empty-state hidden" id="wishEmpty"><div class="es-icon">❤️</div><p>Your wishlist is empty</p><a href="index.html#products" class="btn btn-navy btn-sm" style="margin-top:1rem">Browse Products</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADDRESSES ── -->
+    <div class="profile-page" id="tab-addresses">
+      <div class="content-card">
+        <div class="content-head">
+          <span class="content-title">Saved Addresses</span>
+          <button class="btn btn-navy btn-sm" onclick="showAddAddrForm()"><i class="fa fa-plus"></i> Add New</button>
+        </div>
+        <div class="content-body">
+          <div id="addrList"></div>
+          <div id="addAddrForm" style="display:none">
+            <hr style="margin-bottom:1.25rem"/>
+            <h4 style="font-family:var(--font-head);margin-bottom:1rem">Add New Address</h4>
+            <div class="form-row-2">
+              <div class="form-group"><label class="form-label">Address Type</label>
+                <select class="form-control" id="addrType"><option>Home</option><option>Office</option><option>Other</option></select>
+              </div>
+              <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-control" id="addrName" placeholder="Recipient name"/></div>
+            </div>
+            <div class="form-group"><label class="form-label">Address Line 1</label><input type="text" class="form-control" id="addrLine1" placeholder="House / Building / Street"/></div>
+            <div class="form-group"><label class="form-label">Landmark</label><input type="text" class="form-control" id="addrLandmark" placeholder="Near..."/></div>
+            <div class="form-row-2">
+              <div class="form-group"><label class="form-label">City</label><input type="text" class="form-control" id="addrCity" placeholder="Chennai"/></div>
+              <div class="form-group"><label class="form-label">Pincode</label><input type="text" class="form-control" id="addrPin" placeholder="600001"/></div>
+            </div>
+            <div style="display:flex;gap:.75rem">
+              <button class="btn btn-navy" onclick="saveAddress()"><i class="fa fa-save"></i> Save Address</button>
+              <button class="btn btn-ghost" onclick="document.getElementById('addAddrForm').style.display='none'">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="profile-page" id="tab-settings">
+      <div class="content-card">
+        <div class="content-head"><span class="content-title">Personal Information</span></div>
+        <div class="content-body">
+          <div class="form-row-2">
+            <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-control" id="setFirst"/></div>
+            <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-control" id="setLast"/></div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" id="setEmail"/></div>
+            <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-control" id="setPhone" placeholder="+91 XXXXX XXXXX"/></div>
+          </div>
+          <button class="btn btn-navy" onclick="saveSettings()"><i class="fa fa-save"></i> Save Changes</button>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="content-head"><span class="content-title">Change Password</span></div>
+        <div class="content-body">
+          <div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-control" placeholder="••••••••"/></div>
+          <div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-control" id="newPw" placeholder="Min. 8 characters"/></div>
+          <div class="form-group"><label class="form-label">Confirm New Password</label><input type="password" class="form-control" id="confirmPw" placeholder="Repeat new password"/></div>
+          <button class="btn btn-navy" onclick="changePassword()"><i class="fa fa-lock"></i> Update Password</button>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="content-head"><span class="content-title">Notifications</span></div>
+        <div class="content-body" style="display:flex;flex-direction:column;gap:.85rem">
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:.875rem">Order updates via SMS</span>
+            <input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--navy)"/>
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:.875rem">Offers & promotions via email</span>
+            <input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--navy)"/>
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:.875rem">New arrivals & weekly deals</span>
+            <input type="checkbox" style="width:16px;height:16px;accent-color:var(--navy)"/>
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  buildFooter();
+
+  // ── Auth: redirect guests to login ──
+  if (!Store.user) { location.href = 'login.html'; }
+
+  var user = Store.user || {};
+
+  // ── Populate header ──
+  var nameParts = (user.name||'User').split(' ');
+  var initials  = nameParts.map(function(n){ return n[0]; }).join('').toUpperCase().slice(0,2);
+  document.getElementById('avatarInitials').textContent = initials;
+  document.getElementById('profileName').textContent    = user.name || 'Guest';
+  document.getElementById('profileEmail').textContent   = user.email || '';
+
+  // ── Populate settings form ──
+  var parts = (user.name||'').split(' ');
+  document.getElementById('setFirst').value = parts[0] || '';
+  document.getElementById('setLast').value  = parts.slice(1).join(' ') || '';
+  document.getElementById('setEmail').value = user.email || '';
+
+  // ── Tab switch ──
+  function switchTab(name, el) {
+    document.querySelectorAll('.profile-page').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.profile-nav-link').forEach(function(l){ l.classList.remove('active'); });
+    document.getElementById('tab-' + name).classList.add('active');
+    if (el) el.classList.add('active');
+    if (name === 'orders')    renderMyOrders();
+    if (name === 'wishlist')  renderWishlist();
+    if (name === 'addresses') renderAddresses();
+  }
+
+  // Handle #hash on load
+  if (location.hash === '#wishlist') switchTab('wishlist', document.getElementById('wishlistTab'));
+  if (location.hash === '#orders')   switchTab('orders',   document.getElementById('ordersTab'));
+
+  // ── Overview Stats ──
+  var myOrders = getUserOrders(user.email);
+  var totalSpent = myOrders.reduce(function(s,o){ return s + (o.total||0); }, 0);
+  document.getElementById('accountStats').innerHTML = [
+    { icon:'fa-box',       label:'Total Orders',    value: myOrders.length || 0     },
+    { icon:'fa-rupee-sign',label:'Total Spent',     value: fmt(totalSpent)           },
+    { icon:'fa-heart',     label:'Wishlist Items',  value: Store.wishlist.length     },
+  ].map(function(s){
+    return '<div class="stat-box"><div style="font-size:1.5rem;color:var(--navy);margin-bottom:.5rem"><i class="fa ' + s.icon + '"></i></div><strong>' + s.value + '</strong><span>' + s.label + '</span></div>';
+  }).join('');
+
+  // ── My Orders ──
+  var MOCK_MY_ORDERS = [
+    { id:'NM-100001', items:[{emoji:'🥦',name:'Premium Broccoli',qty:2},{emoji:'🍎',name:'Pink Lady Apples',qty:1}], total:247, date:'2 days ago',   status:'Delivered', payment:'UPI'  },
+    { id:'NM-100002', items:[{emoji:'🥛',name:'Farm Fresh Milk',qty:3},{emoji:'🧀',name:'Aged Cheddar',qty:1}],    total:284, date:'5 days ago',   status:'Delivered', payment:'Card' },
+    { id:'NM-100003', items:[{emoji:'🍞',name:'Sourdough Loaf', qty:1}],                                             total:85,  date:'1 week ago',   status:'Delivered', payment:'UPI'  },
+    { id:'NM-100004', items:[{emoji:'🥭',name:'Alphonso Mangoes',qty:2},{emoji:'🫐',name:'Wild Blueberries',qty:1}],total:427, date:'2 weeks ago',  status:'Delivered', payment:'COD'  },
+  ];
+
+  function renderMyOrders() {
+    var filter = document.getElementById('orderStatusFilter').value;
+    var real   = getUserOrders(user.email);
+    var all    = real.length > 0 ? real : MOCK_MY_ORDERS;
+    var list   = filter ? all.filter(function(o){ return o.status===filter; }) : all;
+    var sc     = {Delivered:'os-delivered',Pending:'os-pending','In Transit':'os-transit',Cancelled:'os-cancelled'};
+    var el     = document.getElementById('myOrdersList');
+    if (list.length === 0) {
+      el.innerHTML = '<div class="empty-state"><div class="es-icon">📦</div><p>No orders found</p><a href="index.html#products" class="btn btn-navy btn-sm" style="margin-top:1rem">Start Shopping</a></div>';
+      return;
+    }
+    el.innerHTML = list.map(function(o){
+      var items = Array.isArray(o.items) ? o.items : [];
+      var preview = items.slice(0,3).map(function(i){ return '<div class="oip-item">' + i.emoji + ' ' + i.name + (i.qty>1?' ×'+i.qty:'') + '</div>'; }).join('');
+      if (items.length > 3) preview += '<div class="oip-item">+' + (items.length-3) + ' more</div>';
+      return '<div class="order-card">'
+        + '<div class="order-card-head">'
+        + '<div><div class="order-id">' + o.id + '</div><div class="order-date">' + o.date + '</div></div>'
+        + '<span class="order-status ' + (sc[o.status]||'os-pending') + '">' + o.status + '</span>'
+        + '</div>'
+        + '<div class="order-card-body">'
+        + (preview ? '<div class="order-items-preview">' + preview + '</div>' : '')
+        + '<div class="order-meta"><div class="order-total">' + fmt(o.total) + '</div>'
+        + '<div style="display:flex;gap:.5rem">'
+        + '<button class="btn btn-ghost btn-sm" onclick="toast(\'Tracking order ' + o.id + '\')"><i class="fa fa-truck"></i> Track</button>'
+        + '<button class="btn btn-ghost btn-sm" onclick="reorder(' + JSON.stringify(o.id) + ')"><i class="fa fa-redo"></i> Reorder</button>'
+        + '</div></div></div></div>';
+    }).join('');
+  }
+
+  // Recent orders on overview
+  var overviewOrders = (getUserOrders(user.email).length > 0 ? getUserOrders(user.email) : MOCK_MY_ORDERS).slice(0,3);
+  document.ge
