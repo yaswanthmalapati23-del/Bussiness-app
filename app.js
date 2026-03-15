@@ -228,9 +228,20 @@ function buildNav(activePage) {
     ? '<a href="profile.html" class="nav-action-btn" title="' + user.name + '"><i class="fa fa-user-circle"></i></a>'
     : '<a href="login.html" class="btn btn-navy btn-sm">Sign In</a>';
 
+  // Mobile drawer user info
+  var mnavUser = user
+    ? '<div class="mnav-user"><div class="mnav-avatar">' + (user.name||'U').split(' ').map(function(n){return n[0];}).join('').toUpperCase().slice(0,2) + '</div><div class="mnav-user-info"><strong>' + user.name + '</strong><span>' + user.email + '</span></div></div>'
+    : '<div class="mnav-user"><div class="mnav-avatar"><i class="fa fa-user"></i></div><div class="mnav-user-info"><strong>Guest</strong><span><a href="login.html" style="color:var(--gold-light)">Sign in →</a></span></div></div>';
+  var mnavAdmin  = (user && user.role === 'admin') ? '<a href="admin.html" class="mnav-link ' + (activePage==='admin'?'active':'') + '"><i class="fa fa-tachometer-alt"></i> Admin Dashboard</a>' : '';
+  var mnavAcct   = '<a href="profile.html" class="mnav-link ' + (activePage==='profile'?'active':'') + '"><i class="fa fa-user-circle"></i> My Account</a>';
+  var mnavLogout = user ? '<div class="mnav-divider"></div><div class="mnav-link" onclick="window.handleLogout()" style="color:rgba(255,80,80,.8)"><i class="fa fa-sign-out-alt"></i> Logout</div>' : '';
+
   document.body.insertAdjacentHTML('afterbegin',
+    // Topbar
     '<div class="topbar"><strong>Free delivery</strong> on orders above ₹499 &nbsp;|&nbsp; <strong>2-hr delivery</strong> available in your area</div>'
+    // Navbar
     + '<nav id="navbar"><div class="nav-inner">'
+    + '<button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>'
     + '<a href="index.html" class="nav-logo"><span class="logo-main">NexMart</span><span class="logo-sub">Premium Supermarket</span></a>'
     + '<div class="nav-links"><a href="index.html" class="nav-link ' + (activePage==='home'?'active':'') + '">Home</a>'
     + '<a href="index.html#products" class="nav-link">Products</a>'
@@ -241,11 +252,62 @@ function buildNav(activePage) {
     + '<button class="nav-action-btn" onclick="toggleCart()" title="Cart"><i class="fa fa-shopping-bag"></i><span class="dot cart-dot" style="display:none">0</span></button>'
     + '<button class="nav-action-btn" onclick="location.href=\'profile.html#wishlist\'" title="Wishlist"><i class="fa fa-heart"></i></button>'
     + userBtn + '</div></div></nav>'
+    // Mobile full-width search
+    + '<div class="mobile-search-bar"><div class="msb-inner"><i class="fa fa-search"></i><input type="text" id="mobileSearch" placeholder="Search products, brands..."/></div></div>'
+    // Mobile nav overlay
+    + '<div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>'
+    // Mobile nav drawer
+    + '<div class="mobile-nav-drawer" id="mobileNavDrawer">'
+    + '<div class="mnav-logo"><span class="logo-main">NexMart</span><span class="logo-sub">Premium Supermarket</span></div>'
+    + mnavUser
+    + '<div class="mnav-section">Shop</div>'
+    + '<a href="index.html" class="mnav-link ' + (activePage==='home'?'active':'') + '" onclick="closeMobileNav()"><i class="fa fa-home"></i> Home</a>'
+    + '<a href="index.html#products" class="mnav-link" onclick="closeMobileNav()"><i class="fa fa-th-large"></i> All Products</a>'
+    + '<a href="index.html#offers" class="mnav-link" onclick="closeMobileNav()"><i class="fa fa-tag"></i> Today\'s Offers</a>'
+    + '<div class="mnav-section">Account</div>'
+    + mnavAcct + mnavAdmin
+    + '<a href="checkout.html" class="mnav-link" onclick="closeMobileNav()"><i class="fa fa-shopping-bag"></i> Cart <span class="badge badge-gold cart-dot" style="margin-left:.5rem;display:none">0</span></a>'
+    + mnavLogout
+    + '</div>'
+    // Mobile bottom tab bar
+    + '<div class="mobile-tabbar"><div class="tabbar-inner">'
+    + '<button class="tabbar-btn ' + (activePage==='home'?'active':'') + '" onclick="location.href=\'index.html\'"><i class="fa fa-home"></i>Home</button>'
+    + '<button class="tabbar-btn" onclick="location.href=\'index.html#products\'"><i class="fa fa-th-large"></i>Shop</button>'
+    + '<button class="tabbar-btn" onclick="toggleCart()" style="position:relative"><i class="fa fa-shopping-bag"></i>Cart<span class="tb-dot cart-dot" style="display:none">0</span></button>'
+    + '<button class="tabbar-btn ' + (activePage==='profile'?'active':'') + '" onclick="location.href=\'profile.html\'"><i class="fa fa-user"></i>Account</button>'
+    + '</div></div>'
   );
+
   updateCartUI();
+
+  // Desktop search
   var si = $('navSearch');
   if (si) si.addEventListener('input', function(e){ if (typeof onNavSearch === 'function') onNavSearch(e.target.value); });
+  // Mobile search
+  var ms = $('mobileSearch');
+  if (ms) ms.addEventListener('input', function(e){ if (typeof onNavSearch === 'function') onNavSearch(e.target.value); });
 }
+
+window.toggleMobileNav = function() {
+  var drawer  = document.getElementById('mobileNavDrawer');
+  var overlay = document.getElementById('mobileNavOverlay');
+  var btn     = document.getElementById('hamburgerBtn');
+  if (!drawer) return;
+  var open = drawer.classList.toggle('open');
+  overlay.classList.toggle('show', open);
+  btn.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+};
+
+window.closeMobileNav = function() {
+  var drawer  = document.getElementById('mobileNavDrawer');
+  var overlay = document.getElementById('mobileNavOverlay');
+  var btn     = document.getElementById('hamburgerBtn');
+  if (drawer)  drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('show');
+  if (btn)     btn.classList.remove('open');
+  document.body.style.overflow = '';
+};
 
 window.handleLogout = function() {
   Store.logout();
@@ -258,63 +320,4 @@ function buildCartDrawer() {
   document.body.insertAdjacentHTML('beforeend',
     '<div class="drawer-overlay" id="cartOverlay" onclick="toggleCart()"></div>'
     + '<div class="cart-drawer" id="cartDrawer">'
-    + '<div class="drawer-head"><h3>Shopping Cart</h3><button class="drawer-close" onclick="toggleCart()"><i class="fa fa-times"></i></button></div>'
-    + '<div class="drawer-body" id="cartBody"></div>'
-    + '<div class="drawer-foot" id="cartFoot"></div></div>'
-  );
-}
-
-window.toggleCart = function() {
-  var drawer = $('cartDrawer'), overlay = $('cartOverlay');
-  if (!drawer) return;
-  var open = drawer.classList.toggle('open');
-  overlay.classList.toggle('show', open);
-  if (open) renderCartDrawer();
-};
-
-function renderCartDrawer() {
-  var body = $('cartBody'), foot = $('cartFoot');
-  if (!body) return;
-  if (Store.cart.length === 0) {
-    body.innerHTML = '<div class="cart-empty"><div class="empty-icon">🛒</div><p>Your cart is empty</p><a href="index.html#products" class="btn btn-navy btn-sm" style="margin-top:1rem" onclick="toggleCart()">Browse Products</a></div>';
-    foot.innerHTML = '';
-    return;
-  }
-  body.innerHTML = Store.cart.map(function(item){
-    return '<div class="cart-item-row">'
-      + '<div class="ci-emoji">' + item.emoji + '</div>'
-      + '<div class="ci-info"><div class="ci-name">' + item.name + '</div>'
-      + '<div class="ci-meta">' + item.weight + '</div>'
-      + '<div class="ci-price">' + fmt(item.price * item.qty) + '</div>'
-      + '<div class="ci-actions"><div class="qty-ctrl">'
-      + '<button class="qty-btn" onclick="window.changeQty(' + item.id + ',-1);renderCartDrawer()">−</button>'
-      + '<span class="qty-num">' + item.qty + '</span>'
-      + '<button class="qty-btn" onclick="window.changeQty(' + item.id + ',1);renderCartDrawer()">+</button>'
-      + '</div><button class="ci-remove" onclick="window.removeFromCart(' + item.id + ');renderCartDrawer()"><i class="fa fa-trash"></i> Remove</button>'
-      + '</div></div></div>';
-  }).join('');
-  var sub = Store.cartTotal(), del = sub >= 499 ? 0 : 49, total = sub + del;
-  foot.innerHTML = '<div class="total-row"><span>Subtotal</span><span>' + fmt(sub) + '</span></div>'
-    + '<div class="total-row"><span>Delivery</span><span>' + (del===0 ? '<span style="color:var(--success)">FREE</span>' : fmt(del)) + '</span></div>'
-    + (del>0 ? '<div style="font-size:.75rem;color:var(--text-lt);margin:.3rem 0">Add ' + fmt(499-sub) + ' more for free delivery</div>' : '')
-    + '<div class="total-row grand"><span>Total</span><span>' + fmt(total) + '</span></div>'
-    + '<a href="checkout.html" class="btn btn-navy btn-lg btn-full" style="margin-top:1rem" onclick="toggleCart()">Proceed to Checkout <i class="fa fa-arrow-right"></i></a>';
-}
-
-function buildFooter() {
-  document.body.insertAdjacentHTML('beforeend',
-    '<footer><div class="footer-inner">'
-    + '<div class="footer-brand"><span class="logo-main">NexMart</span><p>Your trusted premium supermarket. Farm-fresh produce, artisan goods & everyday essentials.</p>'
-    + '<div class="footer-social"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-twitter"></i></a></div></div>'
-    + '<div class="footer-col"><h5>Shop</h5><ul><li><a href="#">Vegetables & Fruits</a></li><li><a href="#">Dairy & Eggs</a></li><li><a href="#">Bakery</a></li><li><a href="#">Beverages</a></li></ul></div>'
-    + '<div class="footer-col"><h5>Company</h5><ul><li><a href="#">About NexMart</a></li><li><a href="#">Careers</a></li><li><a href="#">Blog</a></li></ul></div>'
-    + '<div class="footer-col"><h5>Contact</h5>'
-    + '<div class="contact-item"><i class="fa fa-map-marker-alt"></i> 12, Market Road, Chennai</div>'
-    + '<div class="contact-item"><i class="fa fa-phone"></i> +91 98765 43210</div>'
-    + '<div class="contact-item"><i class="fa fa-envelope"></i> hello@nexmart.in</div></div>'
-    + '</div><div class="footer-bottom"><span>© 2025 NexMart Pvt. Ltd. All rights reserved.</span><span>Privacy · Terms</span></div></footer>'
-    + '<div id="toast"></div>'
-    + '<button class="btn btn-navy btn-icon" id="backTop" style="position:fixed;bottom:2rem;right:2rem;display:none;z-index:90;box-shadow:var(--shadow-lg)" onclick="window.scrollTo({top:0,behavior:\'smooth\'})"><i class="fa fa-arrow-up"></i></button>'
-  );
-  window.addEventListener('scroll', function(){ var bt=$('backTop'); if(bt) bt.style.display=window.scrollY>500?'grid':'none'; });
-}
+    + '<div class="drawer-head"><h3>Shopping Cart</h3><button class="drawer-close" onclick="toggleCart()"
