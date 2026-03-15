@@ -166,7 +166,7 @@
 
   const params = new URLSearchParams(location.search);
   const id = parseInt(params.get('id')) || 1;
-  const product = PRODUCTS.find(p => p.id === id) || PRODUCTS[0];
+  const product = getProducts().find(p => p.id === id) || getProducts()[0];
 
   let localQty = 1;
   function changeLocal(d) { localQty = Math.max(1, localQty + d); document.getElementById('localQty').textContent = localQty; }
@@ -259,7 +259,7 @@
     </div>`).join('');
 
   // Related
-  const related = PRODUCTS.filter(p => p.cat === product.cat && p.id !== product.id).slice(0,4);
+  const related = getProducts().filter(p => p.cat === product.cat && p.id !== product.id).slice(0,4);
   document.getElementById('relatedGrid').innerHTML = related.map((p,i) => productCardHTML(p, i*0.06)).join('');
 
   // Wishlist initial state
@@ -268,4 +268,5 @@
   }
 </script>
 </body>
-</html>
+      </html>
+        
