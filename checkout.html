@@ -311,4 +311,101 @@
       </div>
     </div>
   </div>
-<
+</div>
+
+<script>
+  buildFooter();
+
+  // ── State ──
+  let discount = 0, selectedPayMethod = 'UPI';
+
+  // ── Helpers ──
+  function selectAddr(el) { document.querySelectorAll('.addr-option').forEach(a=>a.classList.remove('selected')); el.classList.add('selected'); }
+  function selectSlot(btn) { document.querySelectorAll('.slot-btn:not(.unavailable)').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+  function toggleUpi(btn) { document.querySelectorAll('.upi-app').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+  function formatCard(inp) { inp.value = inp.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim().substring(0,19); }
+  function formatExpiry(inp) { inp.value = inp.value.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'$1/$2').substring(0,5); }
+  function selectPay(el, method) {
+    document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('selected')); el.classList.add('selected');
+    ['upi','card','netbank','cod'].forEach(m=>document.getElementById(m+'Panel').style.display='none');
+    document.getElementById(method+'Panel').style.display='block';
+    selectedPayMethod = { upi:'UPI', card:'Card', netbank:'Net Banking', cod:'Cash on Delivery' }[method];
+    renderSummary();
+  }
+
+  function applyCoupon() {
+    const code = document.getElementById('couponInput').value.trim().toUpperCase();
+    if (code === 'FRESH20') { discount=20; toast('🎉 Coupon FRESH20 applied — 20% off!'); }
+    else if (code === 'NEXMART10') { discount=10; toast('🎉 Coupon NEXMART10 applied — 10% off!'); }
+    else { toast('Invalid coupon code', 'error'); return; }
+    renderSummary();
+  }
+
+  function renderSummary() {
+    const list = document.getElementById('orderItemsList');
+    if (Store.cart.length === 0) {
+      list.innerHTML = '<p style="text-align:center;color:var(--text-lt);font-size:.875rem;padding:1rem 0">Your cart is empty.<br/><a href="index.html">Browse products →</a></p>';
+      document.getElementById('summaryRows').innerHTML = '';
+      return;
+    }
+    list.innerHTML = Store.cart.map(item => `
+      <div class="oi-row">
+        <div class="oi-emoji">${item.emoji}</div>
+        <div style="flex:1">
+          <div class="oi-name">${item.name}</div>
+          <div class="oi-qty">${item.weight} × ${item.qty}</div>
+        </div>
+        <div class="oi-price">${fmt(item.price * item.qty)}</div>
+      </div>`).join('');
+
+    const sub   = Store.cartTotal();
+    const del   = sub >= 499 ? 0 : 49;
+    const dis   = Math.round(sub * discount / 100);
+    const cod   = selectedPayMethod === 'Cash on Delivery' ? 29 : 0;
+    const total = sub - dis + del + cod;
+
+    document.getElementById('summaryRows').innerHTML = `
+      <div class="sr-row"><span>Subtotal (${Store.cartCount()} items)</span><span>${fmt(sub)}</span></div>
+      <div class="sr-row"><span>Delivery</span><span>${del===0?'<span style="color:var(--success)">FREE</span>':fmt(del)}</span></div>
+      ${dis>0?`<div class="sr-row" style="color:var(--success)"><span>Discount (${discount}%)</span><span>− ${fmt(dis)}</span></div>`:''}
+      ${cod>0?`<div class="sr-row"><span>COD Charges</span><span>${fmt(cod)}</span></div>`:''}
+      <div class="sr-row grand"><span>Total</span><span>${fmt(total)}</span></div>`;
+
+    window._checkoutTotal = total;
+  }
+
+  function placeOrder() {
+    if (Store.cart.length === 0) { toast('Your cart is empty!', 'error'); return; }
+    const btn = document.getElementById('placeOrderBtn');
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+    btn.disabled = true;
+    setTimeout(() => {
+      const orderId = 'NM-' + Math.floor(Math.random()*900000+100000);
+      const orderData = {
+        id: orderId,
+        customer: Store.user ? Store.user.name : 'Guest',
+        userEmail: Store.user ? Store.user.email : '',
+        items: Store.cart.map(c => ({emoji:c.emoji, name:c.name, weight:c.weight, qty:c.qty, price:c.price})),
+        total: window._checkoutTotal || 0,
+        date: 'Just now',
+        payment: selectedPayMethod,
+        status: 'Pending',
+      };
+      saveOrder(orderData);
+      document.getElementById('orderNum').textContent = `Order ID: ${orderId}`;
+      document.getElementById('confirmedPay').textContent = selectedPayMethod;
+      document.getElementById('confirmedTotal').textContent = fmt(window._checkoutTotal || 0);
+      Store.cart = []; Store.saveCart(); updateCartUI();
+      document.getElementById('checkoutLayout').style.display='none';
+      document.querySelector('.steps-bar').style.display='none';
+      document.getElementById('successScreen').classList.add('show');
+      // update steps
+      ['step2','step3','step4'].forEach(s=>{ const el=document.getElementById(s); el.classList.remove('active'); el.classList.add('done'); el.querySelector('.step-circle').innerHTML='<i class="fa fa-check"></i>'; });
+      ['line2','line3'].forEach(l=>document.getElementById(l).classList.add('done'));
+    }, 1800);
+  }
+
+  renderSummary();
+</script>
+</body>
+</html>
